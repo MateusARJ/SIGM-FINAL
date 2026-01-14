@@ -1,0 +1,132 @@
+{
+  "_type": "export",
+  "__export_format": 4,
+  "__export_date": "2026-01-07T12:00:00.000Z",
+  "__export_source": "insomnia.desktop.app:v8.0.0",
+  "resources": [
+    {
+      "_id": "req_criar_disciplina_fix",
+      "parentId": "wrk_hackathon_safe",
+      "modified": 1704628800000,
+      "created": 1704628800000,
+      "url": "http://localhost:3333/disciplinas",
+      "name": "1. Criar Disciplina (POST)",
+      "description": "Cria uma nova disciplina no sistema",
+      "method": "POST",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n\t\"name\": \"Matemática\",\n\t\"grade\": \"9º Ano\"\n}"
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": 100,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "req_listar_disciplinas_fix",
+      "parentId": "wrk_hackathon_safe",
+      "modified": 1704628800000,
+      "created": 1704628800000,
+      "url": "http://localhost:3333/disciplinas",
+      "name": "2. Listar Disciplinas (GET)",
+      "description": "Lista todas as disciplinas salvas na memória",
+      "method": "GET",
+      "body": {},
+      "parameters": [],
+      "headers": [],
+      "authentication": {},
+      "metaSortKey": 200,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "req_salvar_mock_fix",
+      "parentId": "wrk_hackathon_safe",
+      "modified": 1704628800000,
+      "created": 1704628800000,
+      "url": "http://localhost:3333/conteudos/mock-save",
+      "name": "3. Salvar Conteúdo Mock (POST)",
+      "description": "Simula a IA salvando um link gerado",
+      "method": "POST",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n\t\"requestId\": \"req-teste-123\",\n\t\"url\": \"https://meubucket.com/arquivo.pdf\"\n}"
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": 300,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "req_buscar_conteudo_fix",
+      "parentId": "wrk_hackathon_safe",
+      "modified": 1704628800000,
+      "created": 1704628800000,
+      "url": "http://localhost:3333/conteudos/busca",
+      "name": "4. Buscar Conteúdo (GET)",
+      "description": "Busca conteúdos gerados por palavra-chave",
+      "method": "GET",
+      "body": {},
+      "parameters": [
+        {
+          "name": "q",
+          "value": "teste",
+          "disabled": false
+        }
+      ],
+      "headers": [],
+      "authentication": {},
+      "metaSortKey": 400,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "wrk_hackathon_safe",
+      "parentId": null,
+      "modified": 1704628800000,
+      "created": 1704628800000,
+      "name": "Hackathon API (Safe Mode)",
+      "description": "Versão simplificada sem variáveis de ambiente",
+      "scope": "collection",
+      "_type": "workspace"
+    }
+  ]
+}
