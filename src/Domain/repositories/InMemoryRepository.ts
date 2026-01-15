@@ -1,5 +1,5 @@
-import type { IRepository } from "../Domain/interfaces/IRepository"; 
-import type { Assunto, Disciplina } from "../Domain/interfaces/IConfiguracaoConteudo";
+import type { IRepository } from "../interfaces/IRepository"; 
+import type { Assunto, Disciplina } from "../interfaces/IConfiguracaoConteudo";
 
 export class InMemoryRepository implements IRepository {
     // Simulando o Banco de Dados com Maps (Chave -> Valor)

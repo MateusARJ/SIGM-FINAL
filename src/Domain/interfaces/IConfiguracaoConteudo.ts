@@ -25,22 +25,22 @@ export interface Assunto {
 }
 
 /**
- * interfaces para configuração de geração de conteúdo
+ * Interfaces para configuração do conteúdo para a IA
  */
 
 export interface DadosComuns {
-  disciplinaId: string; // ID da disciplina do banco
-  anoLetivo: string;    // Ex: "9º Ano"
-  assunto: string;      // Ex: "Revolução Industrial"
-  instrucoesExtras?: string; // O professor digita: "Foque na máquina a vapor"
+  disciplinaId: string;
+  anoLetivo: string;    
+  assunto: string;     
+  instrucoesExtras?: string; 
 }
 
 // Configurações para geração de aula (PPT)
 export interface ConfiguracaoAula {
-  numeroSlides?: number;
-  incluirImagens: boolean;
-  incluirAtividades: boolean;
-  estilo?: | "minimalista" | "profissiona" | "colorido" | "criativo";
+  numeroSlides?: number; // * caso possua obrigatório ser maior que 0
+  incluirImagens?: boolean; 
+  incluirAtividades?: boolean; 
+  estilo?: | "minimalista" | "profissional" | "colorido" | "criativo"; // * caso não informado, padrão "minimalista"
 }
 
 // Configurações para geração de prova (PDF)
@@ -54,6 +54,6 @@ export interface ConfiguracaoProva {
 // Configurações para geração de tarefa (PDF)
 export interface ConfiguracaoTarefa {
   numeroExercicios: number;
-  incluirExemplos: boolean;
+  incluirExemplos?: boolean;
   prazoEntrega?: Date;
 }

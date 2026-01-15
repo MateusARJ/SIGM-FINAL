@@ -1,6 +1,6 @@
 // src/server.ts
 import express from 'express';
-import { InMemoryRepository } from './repositories/InMemoryRepository';
+import { InMemoryRepository } from './Domain/repositories/InMemoryRepository';
 import type { Disciplina } from './Domain/interfaces/IConfiguracaoConteudo';
 import { v4 as uuidv4 } from 'uuid'; // Instale: npm i uuid && npm i -D @types/uuid
 

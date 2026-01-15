@@ -43,8 +43,7 @@
     "moduleDetection": "force",
     "skipLibCheck": true,
   },
-  "include": ["src/**/*"],
+  "include": ["src/**/*", "src/Domain/http/middlewares"],
   "exclude": ["node_modules"]
-
 }
 
