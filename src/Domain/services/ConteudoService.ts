@@ -27,7 +27,7 @@ export class ConteudoService implements IConteudoService {
      */
     async verificarStatusGeracao(requestId: string): Promise<string> {
         // Simula a verificação de status
-        this.repository.getGeneratedContentResponse(requestId);
+        this.repository.getGeneratedContentResponseById(requestId);
         console.log(`Verificando status para requisição: ${requestId}`);
         const statuses = ["pendente", "gerando", "concluido", "erro"];
         return statuses[Math.floor(Math.random() * statuses.length)]!;

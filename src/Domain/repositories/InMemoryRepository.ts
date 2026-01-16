@@ -1,4 +1,4 @@
-import type { IRepository } from "../interfaces/IRepository"; 
+import type { IRepository } from "../interfaces/IRepository";
 import type { Assunto, Disciplina } from "../interfaces/IConfiguracaoConteudo";
 
 export class InMemoryRepository implements IRepository {
@@ -10,17 +10,25 @@ export class InMemoryRepository implements IRepository {
     // ========================
     // DISCIPLINA
     // ========================
+
     async addDisciplina(disciplina: Disciplina): Promise<void> {
         this.disciplinas.set(disciplina.id, disciplina);
-        console.log(`[DB] Disciplina salva: ${disciplina.nome}`);
     }
 
-    async getDisciplina(id: string): Promise<Disciplina> {
-        const disciplina = this.disciplinas.get(id);
-        if (!disciplina) {
-            throw new Error(`Disciplina com ID ${id} não encontrada.`);
+    async getDisciplinaById(id: string): Promise<Disciplina | undefined> {
+        return this.disciplinas.get(id);
+    }
+
+    async getDisciplinaByName(name: string): Promise<Disciplina | undefined> {
+        const normalized = name.toLowerCase().trim();
+
+        for (const disciplina of this.disciplinas.values()) {
+            if (disciplina.nome.toLowerCase() === normalized) {
+                return disciplina;
+            }
         }
-        return disciplina;
+
+        return undefined;
     }
 
     async getAllDisciplinas(): Promise<Disciplina[]> {
@@ -28,9 +36,10 @@ export class InMemoryRepository implements IRepository {
     }
 
     async updateDisciplina(disciplina: Disciplina): Promise<void> {
-        if (this.disciplinas.has(disciplina.id)) {
-            this.disciplinas.set(disciplina.id, disciplina);
+        if (!this.disciplinas.has(disciplina.id)) {
+            throw new Error("Disciplina não encontrada");
         }
+        this.disciplinas.set(disciplina.id, disciplina);
     }
 
     async deleteDisciplina(id: string): Promise<void> {
@@ -44,14 +53,14 @@ export class InMemoryRepository implements IRepository {
         this.assuntos.set(assunto.id, assunto);
     }
 
-    async getAssunto(id: string): Promise<Assunto | undefined> {
+    async getAssuntoById(id: string): Promise<Assunto | undefined> {
         return this.assuntos.get(id);
     }
 
     async getAssuntosByDisciplina(disciplinaId: string): Promise<Assunto[]> {
         // Filtro manual (simulando um WHERE do SQL)
         return Array.from(this.assuntos.values())
-            .filter(a => a.id === disciplinaId);
+            .filter(a => a.disciplinaID === disciplinaId);
     }
 
     async getAllAssuntos(): Promise<Assunto[]> {
@@ -77,7 +86,7 @@ export class InMemoryRepository implements IRepository {
         this.generatedContents.set(requestId, { requestId, contentUrl });
     }
 
-    async getGeneratedContentResponse(requestId: string): Promise<string | undefined> {
+    async getGeneratedContentResponseById(requestId: string): Promise<string | undefined> {
         const item = this.generatedContents.get(requestId);
         return item?.contentUrl;
     }

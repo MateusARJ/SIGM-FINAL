@@ -14,14 +14,14 @@ export class DisciplinaService implements IDisciplinaService {
         return this.repository.getAllDisciplinas();
     }
     async get(id: string): Promise<Disciplina> {
-        const disciplina = this.repository.getDisciplina(id);
-        if (disciplina === undefined) {
+        const disciplina = await this.repository.getDisciplinaById(id);
+        if (!disciplina) {
             throw new Error(`Disciplina com ID ${id} não encontrada.`);
         }
         return disciplina;
     }
     async findByName(name: string): Promise<Disciplina | undefined> {
-        return this.repository.getDisciplina(name.toLocaleLowerCase().trim());
+        return this.repository.getDisciplinaByName(name);
     }
     async create(data: Omit<Disciplina, 'id'>): Promise<Disciplina> {
         if (!data.nome || data.nome.trim() === '') {
@@ -31,7 +31,7 @@ export class DisciplinaService implements IDisciplinaService {
             throw new Error("Nome da disciplina deve ter pelo menos 3 caracteres.");
         }
 
-        const duplicado = await this.repository.getDisciplina(data.nome);
+        const duplicado = await this.repository.getDisciplinaByName(data.nome);
         if (duplicado) {
             throw new Error("Já existe uma disciplina com este nome.");
         }
@@ -46,23 +46,19 @@ export class DisciplinaService implements IDisciplinaService {
     }
     async update(id: string, data: Partial<Omit<Disciplina, 'id'>>): Promise<Disciplina> {
         const atual = await this.get(id); // Garante que existe
-        
+
         const atualizado = {
             ...atual,
             ...data
         };
-        
+
         await this.repository.updateDisciplina(atualizado);
         return atualizado;
     }
     async delete(id: string): Promise<void> {
-        const deletado = await this.get(id);
-        if (!deletado) {
-            throw new Error(`Disciplina com ID ${id} não encontrada.`);
-        }
-        else {
-            await this.repository.deleteDisciplina(id);
-        }
+        await this.get(id);
+        await this.repository.deleteDisciplina(id);
+
     }
 
 }

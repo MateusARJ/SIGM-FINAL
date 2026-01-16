@@ -13,7 +13,7 @@ export class AssuntoService implements IAssuntoService {
   }
 
   async get(id: string): Promise<Assunto> {
-    const assunto = await this.repository.getAssunto(id);
+    const assunto = await this.repository.getAssuntoById(id);
     if (!assunto) throw new Error(`Assunto com ID ${id} não encontrado.`);
     return assunto;
   }
@@ -26,7 +26,7 @@ export class AssuntoService implements IAssuntoService {
 
   async create(data: Omit<Assunto, 'id'>): Promise<Assunto> {
     // 1. Valida se a disciplina existe (Regra de Negócio)
-    const disciplina = await this.repository.getDisciplina(data.disciplinaID);
+    const disciplina = await this.repository.getDisciplinaById(data.disciplinaID);
     if (!disciplina) {
       throw new Error("Disciplina informada não existe.");
     }
