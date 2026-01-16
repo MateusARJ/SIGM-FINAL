@@ -1,4 +1,4 @@
-import type { AnoOuSerie, NomeDisciplina, TipoConteudo } from "../Models/TiposBasicos";
+import type { AnoOuSerie, TipoConteudo } from "../Models/TiposBasicos";
 
 // ============================================
 // INTERFACES (Objetos Complexos)
@@ -13,22 +13,23 @@ export interface anoLetivo {
 
 export interface Disciplina {
   id: string;
-  nome: NomeDisciplina;
-  Assuntos: Array<Assunto>;
+  nome: string;
+  assuntos: Array<Assunto>;
 }
 
 export interface Assunto {
   id: string;
   nome: string;
-  disciplina: Disciplina;
+  disciplinaID: string;
   anoLetivo: AnoOuSerie;
 }
 
 /**
- * Interfaces para configuração do conteúdo para a IA
+ * Interfaces para configuração do modelo de requisição para a IA
  */
 
 export interface DadosComuns {
+  id: string;
   disciplinaId: string;
   anoLetivo: string;    
   assunto: string;     

@@ -43,7 +43,7 @@
     "moduleDetection": "force",
     "skipLibCheck": true,
   },
-  "include": ["src/**/*", "src/Domain/http/middlewares"],
+  "include": ["src/**/*", "src/Domain/http/middlewares", "src/Domain/http/routes/assunto.routes.ts"],
   "exclude": ["node_modules"]
 }
 

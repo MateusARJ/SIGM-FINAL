@@ -8,7 +8,7 @@ export interface IRepository {
 
     // Métodos para Disciplina
     addDisciplina(disciplina: Disciplina): Promise<void>;
-    getDisciplina(id: string): Promise<Disciplina | undefined>;
+    getDisciplina(id: string): Promise<Disciplina>;
     getAllDisciplinas(): Promise<Disciplina[]>;
     updateDisciplina(disciplina: Disciplina): Promise<void>;
     deleteDisciplina(id: string): Promise<void>;

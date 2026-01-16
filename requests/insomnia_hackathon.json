@@ -1,132 +1,100 @@
 {
   "_type": "export",
   "__export_format": 4,
-  "__export_date": "2026-01-07T12:00:00.000Z",
-  "__export_source": "insomnia.desktop.app:v8.0.0",
+  "__export_date": "2026-01-15T14:00:00.000Z",
+  "__export_source": "insomnia.desktop.app:v2023.5.8",
   "resources": [
     {
-      "_id": "req_criar_disciplina_fix",
-      "parentId": "wrk_hackathon_safe",
-      "modified": 1704628800000,
-      "created": 1704628800000,
-      "url": "http://localhost:3333/disciplinas",
-      "name": "1. Criar Disciplina (POST)",
-      "description": "Cria uma nova disciplina no sistema",
+      "_id": "wrk_clean_arch_api",
+      "_type": "workspace",
+      "name": "Clean Architecture API",
+      "description": "Testes das rotas de Assunto, Disciplina e Conteúdo",
+      "scope": "collection"
+    },
+    {
+      "_id": "env_local",
+      "_type": "environment",
+      "parentId": "wrk_clean_arch_api",
+      "name": "Local",
+      "data": {
+        "base_url": "http://localhost:3000",
+        "assunto_id": "",
+        "disciplina_id": "",
+        "request_id": ""
+      }
+    },
+
+    {
+      "_id": "req_create_disciplina",
+      "_type": "request",
+      "parentId": "wrk_clean_arch_api",
+      "name": "Criar Disciplina",
       "method": "POST",
+      "url": "{{ base_url }}/disciplinas",
       "body": {
         "mimeType": "application/json",
-        "text": "{\n\t\"name\": \"Matemática\",\n\t\"grade\": \"9º Ano\"\n}"
-      },
-      "parameters": [],
-      "headers": [
-        {
-          "name": "Content-Type",
-          "value": "application/json"
-        }
-      ],
-      "authentication": {},
-      "metaSortKey": 100,
-      "isPrivate": false,
-      "settingStoreCookies": true,
-      "settingSendCookies": true,
-      "settingDisableRenderRequestBody": false,
-      "settingEncodeUrl": true,
-      "settingRebuildPath": true,
-      "settingFollowRedirects": "global",
-      "_type": "request"
+        "text": "{\n  \"nome\": \"Matemática\"\n}"
+      }
     },
     {
-      "_id": "req_listar_disciplinas_fix",
-      "parentId": "wrk_hackathon_safe",
-      "modified": 1704628800000,
-      "created": 1704628800000,
-      "url": "http://localhost:3333/disciplinas",
-      "name": "2. Listar Disciplinas (GET)",
-      "description": "Lista todas as disciplinas salvas na memória",
+      "_id": "req_list_disciplina",
+      "_type": "request",
+      "parentId": "wrk_clean_arch_api",
+      "name": "Listar Disciplinas",
       "method": "GET",
-      "body": {},
-      "parameters": [],
-      "headers": [],
-      "authentication": {},
-      "metaSortKey": 200,
-      "isPrivate": false,
-      "settingStoreCookies": true,
-      "settingSendCookies": true,
-      "settingDisableRenderRequestBody": false,
-      "settingEncodeUrl": true,
-      "settingRebuildPath": true,
-      "settingFollowRedirects": "global",
-      "_type": "request"
+      "url": "{{ base_url }}/disciplinas"
     },
+
+
     {
-      "_id": "req_salvar_mock_fix",
-      "parentId": "wrk_hackathon_safe",
-      "modified": 1704628800000,
-      "created": 1704628800000,
-      "url": "http://localhost:3333/conteudos/mock-save",
-      "name": "3. Salvar Conteúdo Mock (POST)",
-      "description": "Simula a IA salvando um link gerado",
+      "_id": "req_create_assunto",
+      "_type": "request",
+      "parentId": "wrk_clean_arch_api",
+      "name": "Criar Assunto",
       "method": "POST",
+      "url": "{{ base_url }}/assuntos",
       "body": {
         "mimeType": "application/json",
-        "text": "{\n\t\"requestId\": \"req-teste-123\",\n\t\"url\": \"https://meubucket.com/arquivo.pdf\"\n}"
-      },
-      "parameters": [],
-      "headers": [
-        {
-          "name": "Content-Type",
-          "value": "application/json"
-        }
-      ],
-      "authentication": {},
-      "metaSortKey": 300,
-      "isPrivate": false,
-      "settingStoreCookies": true,
-      "settingSendCookies": true,
-      "settingDisableRenderRequestBody": false,
-      "settingEncodeUrl": true,
-      "settingRebuildPath": true,
-      "settingFollowRedirects": "global",
-      "_type": "request"
+        "text": "{\n  \"nome\": \"Equações do 1º Grau\",\n  \"disciplinaID\": \"{{ disciplina_id }}\"\n}"
+      }
     },
     {
-      "_id": "req_buscar_conteudo_fix",
-      "parentId": "wrk_hackathon_safe",
-      "modified": 1704628800000,
-      "created": 1704628800000,
-      "url": "http://localhost:3333/conteudos/busca",
-      "name": "4. Buscar Conteúdo (GET)",
-      "description": "Busca conteúdos gerados por palavra-chave",
+      "_id": "req_list_assunto",
+      "_type": "request",
+      "parentId": "wrk_clean_arch_api",
+      "name": "Listar Assuntos",
       "method": "GET",
-      "body": {},
-      "parameters": [
-        {
-          "name": "q",
-          "value": "teste",
-          "disabled": false
-        }
-      ],
-      "headers": [],
-      "authentication": {},
-      "metaSortKey": 400,
-      "isPrivate": false,
-      "settingStoreCookies": true,
-      "settingSendCookies": true,
-      "settingDisableRenderRequestBody": false,
-      "settingEncodeUrl": true,
-      "settingRebuildPath": true,
-      "settingFollowRedirects": "global",
-      "_type": "request"
+      "url": "{{ base_url }}/assuntos"
+    },
+
+
+    {
+      "_id": "req_create_conteudo",
+      "_type": "request",
+      "parentId": "wrk_clean_arch_api",
+      "name": "Solicitar Geração de Conteúdo",
+      "method": "POST",
+      "url": "{{ base_url }}/conteudos",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"assuntoId\": \"{{ assunto_id }}\",\n  \"nivel\": \"iniciante\",\n  \"formato\": \"texto\"\n}"
+      }
     },
     {
-      "_id": "wrk_hackathon_safe",
-      "parentId": null,
-      "modified": 1704628800000,
-      "created": 1704628800000,
-      "name": "Hackathon API (Safe Mode)",
-      "description": "Versão simplificada sem variáveis de ambiente",
-      "scope": "collection",
-      "_type": "workspace"
+      "_id": "req_status_conteudo",
+      "_type": "request",
+      "parentId": "wrk_clean_arch_api",
+      "name": "Verificar Status do Conteúdo",
+      "method": "GET",
+      "url": "{{ base_url }}/conteudos/{{ request_id }}/status"
+    },
+    {
+      "_id": "req_get_conteudo",
+      "_type": "request",
+      "parentId": "wrk_clean_arch_api",
+      "name": "Obter Conteúdo Gerado",
+      "method": "GET",
+      "url": "{{ base_url }}/conteudos/{{ request_id }}"
     }
   ]
 }

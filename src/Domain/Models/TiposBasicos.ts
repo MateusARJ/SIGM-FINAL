@@ -15,23 +15,8 @@ export type AnoOuSerie =
   | "9º Ano" 
   | "1ª Série" 
   | "2ª Série" 
-  | "3ª Série";
-
-// Disciplinas disponíveis
-export type NomeDisciplina = 
-  | "Matemática" 
-  | "Português" 
-  | "Ciências" 
-  | "História" 
-  | "Geografia" 
-  | "Inglês" 
-  | "Educação Física" 
-  | "Artes" 
-  | "Física" 
-  | "Química" 
-  | "Biologia" 
-  | "Sociologia" 
-  | "Filosofia";
+  | "3ª Série"
+  | string; // Permite anos personalizados (ex: "Educação Infantil")
 
 // Tipos de conteúdo que podem ser gerados
 export type TipoConteudo = "aula" | "prova" | "tarefa";

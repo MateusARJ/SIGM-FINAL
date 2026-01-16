@@ -15,8 +15,12 @@ export class InMemoryRepository implements IRepository {
         console.log(`[DB] Disciplina salva: ${disciplina.nome}`);
     }
 
-    async getDisciplina(id: string): Promise<Disciplina | undefined> {
-        return this.disciplinas.get(id);
+    async getDisciplina(id: string): Promise<Disciplina> {
+        const disciplina = this.disciplinas.get(id);
+        if (!disciplina) {
+            throw new Error(`Disciplina com ID ${id} não encontrada.`);
+        }
+        return disciplina;
     }
 
     async getAllDisciplinas(): Promise<Disciplina[]> {
