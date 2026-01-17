@@ -38,6 +38,7 @@ export interface DadosComuns {
 
 // Configurações para geração de aula (PPT)
 export interface ConfiguracaoAula {
+  tipoConteudo: 'aula'; // <--- O "Discriminador"
   numeroSlides?: number; // * caso possua obrigatório ser maior que 0
   incluirImagens?: boolean; 
   incluirAtividades?: boolean; 
@@ -46,6 +47,7 @@ export interface ConfiguracaoAula {
 
 // Configurações para geração de prova (PDF)
 export interface ConfiguracaoProva {
+  tipoConteudo: 'prova'; // <--- O "Discriminador"
   numeroQuestoes: number;
   tiposQuestao: ("objetiva" | "dissertativa" | "verdadeiroFalso")[];
   nivelDificuldade: "fácil" | "médio" | "difícil";
@@ -54,6 +56,7 @@ export interface ConfiguracaoProva {
 
 // Configurações para geração de tarefa (PDF)
 export interface ConfiguracaoTarefa {
+  tipoConteudo: 'tarefa'; // <--- O "Discriminador"
   numeroExercicios: number;
   incluirExemplos?: boolean;
   prazoEntrega?: Date;

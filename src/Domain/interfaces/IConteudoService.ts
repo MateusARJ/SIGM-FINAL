@@ -1,7 +1,10 @@
-import { SolicitacaoConteudo } from "../Models/RequisicaoModelo";
+import { SolicitacaoConteudo, RegistroConteudo } from "../Models/RequisicaoModelo";
 
 export interface IConteudoService {
-  salvarGeracao(solicitacao: SolicitacaoConteudo): Promise<string>;
+  criarSolicitacao(data: Omit<SolicitacaoConteudo, 'id'>): Promise<{ requestId: string }>;
+  obterConteudoPorId(requestId: string): Promise<RegistroConteudo>;
+  editar(requestId: string, dados: Partial<Omit<SolicitacaoConteudo, 'id'>>): Promise<{ requestId: string }>;
+  excluir(requestId: string): Promise<{ requestId: string }>
   verificarStatusGeracao(requestId: string): Promise<string>;
-  obterConteudoGerado(requestId: string): Promise<any>; // nota: alterar esse promisse
+
 }
