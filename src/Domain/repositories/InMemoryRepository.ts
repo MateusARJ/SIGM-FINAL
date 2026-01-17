@@ -78,26 +78,19 @@ export class InMemoryRepository implements IRepository {
     // ========================
     // CONTEÚDO GERADO
     // ========================
-    async saveGeneratedContentResponse(requestId: string, contentUrl: string): Promise<void> {
-        this.generatedContents.set(requestId, { requestId, contentUrl });
+    async salvarConteudorResultado(conteudo: any): Promise<string> {
+        this.generatedContents.set(conteudo.requestId, conteudo);
+        return conteudo.requestId;
     }
-
-    async updateGeneratedContentResponse(requestId: string, contentUrl: string): Promise<void> {
-        this.generatedContents.set(requestId, { requestId, contentUrl });
+    async buscarConteudoPorId(requestId: string): Promise<any | undefined> {
+        return this.generatedContents.get(requestId);
     }
-
-    async getGeneratedContentResponseById(requestId: string): Promise<string | undefined> {
-        const item = this.generatedContents.get(requestId);
-        return item?.contentUrl;
+    async atualizarConteudo(conteudo: any): Promise<string> {
+        this.generatedContents.set(conteudo.requestId, conteudo);
+        return conteudo.requestId;
     }
-
-    async deleteGeneratedContentResponse(requestId: string): Promise<void> {
+    async removerConteudo(requestId: string): Promise<string> {
         this.generatedContents.delete(requestId);
-    }
-
-    async searchGeneratedContentResponses(keyword: string): Promise<Array<{ requestId: string; contentUrl: string }>> {
-        // Simulação de busca "LIKE %keyword%"
-        return Array.from(this.generatedContents.values())
-            .filter(item => item.contentUrl.includes(keyword) || item.requestId.includes(keyword));
+        return requestId;
     }
 }

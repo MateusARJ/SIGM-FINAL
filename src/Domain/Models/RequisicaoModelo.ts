@@ -20,6 +20,18 @@ export type SolicitacaoConteudo = DadosComuns & (
   | ConfiguracaoTarefa
 );
 
+/**
+ * Essa é a interface do que vai para o banco (o objeto completo)
+ */
+export interface RegistroConteudo {
+  requestId: string;
+  solicitacao: SolicitacaoConteudo; // <--- A solicitação fica ANINHADA aqui
+  status: "pendente" | "processando" | "concluido" | "erro";
+  resultado?: { tipo: string; conteudo: string }; // O retorno da IA (opcional no início)
+  criadoEm: Date;
+  atualizadoEm: Date;
+}
+
 // exemplo do body da solicitação de conteúdo:
  
 /*

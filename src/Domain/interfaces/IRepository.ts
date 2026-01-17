@@ -1,4 +1,5 @@
 import type { Assunto, Disciplina, anoLetivo } from "./IConfiguracaoConteudo";
+import { SolicitacaoConteudo, RegistroConteudo } from "../Models/RequisicaoModelo";
 
 // ============================================
 // INTERFACES (Repositório)
@@ -24,11 +25,12 @@ export interface IRepository {
 
     // Metodo para armazenar respostas de geração de conteúdo
 
-    // ideia: adicionar tags para as respostas gerados como forma de aprimorar a pesquisa (colocando tag como requisito opcional da pesquisa)
-    saveGeneratedContentResponse(requestId: string, contentUrl: string): Promise<void>;
-    updateGeneratedContentResponse(requestId: string, contentUrl: string): Promise<void>;
-    getGeneratedContentResponseById(requestId: string): Promise<string | undefined>;
-    deleteGeneratedContentResponse(requestId: string): Promise<void>;
-    searchGeneratedContentResponses(keyword: string): Promise<Array<{ requestId: string; contentUrl: string }>>;
+    // ideia: adicionar tags para as respostas gerados como forma de aprimorar a pesquisa (colocando tag como requisito opcional da pesquisa
+    salvarConteudorResultado(conteudo: any): Promise<string>;
+    buscarConteudoPorId(requestId: string): Promise<RegistroConteudo>;
+    atualizarConteudo(conteudo: any): Promise<string>;
+    removerConteudo(requestId: string): Promise<string>;
+    verificarStatusGeracao(requestId: string): Promise<string>;
+    
 
 }
