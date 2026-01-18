@@ -1,0 +1,100 @@
+{
+  "_type": "export",
+  "__export_format": 4,
+  "__export_date": "2026-01-15T14:00:00.000Z",
+  "__export_source": "insomnia.desktop.app:v2023.5.8",
+  "resources": [
+    {
+      "_id": "wrk_clean_arch_api",
+      "_type": "workspace",
+      "name": "Clean Architecture API",
+      "description": "Testes das rotas de Assunto, Disciplina e Conteúdo",
+      "scope": "collection"
+    },
+    {
+      "_id": "env_local",
+      "_type": "environment",
+      "parentId": "wrk_clean_arch_api",
+      "name": "Local",
+      "data": {
+        "base_url": "http://localhost:3000",
+        "assunto_id": "",
+        "disciplina_id": "",
+        "request_id": ""
+      }
+    },
+
+    {
+      "_id": "req_create_disciplina",
+      "_type": "request",
+      "parentId": "wrk_clean_arch_api",
+      "name": "Criar Disciplina",
+      "method": "POST",
+      "url": "{{ base_url }}/disciplinas",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"nome\": \"Matemática\"\n}"
+      }
+    },
+    {
+      "_id": "req_list_disciplina",
+      "_type": "request",
+      "parentId": "wrk_clean_arch_api",
+      "name": "Listar Disciplinas",
+      "method": "GET",
+      "url": "{{ base_url }}/disciplinas"
+    },
+
+
+    {
+      "_id": "req_create_assunto",
+      "_type": "request",
+      "parentId": "wrk_clean_arch_api",
+      "name": "Criar Assunto",
+      "method": "POST",
+      "url": "{{ base_url }}/assuntos",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"nome\": \"Equações do 1º Grau\",\n  \"disciplinaID\": \"{{ disciplina_id }}\"\n}"
+      }
+    },
+    {
+      "_id": "req_list_assunto",
+      "_type": "request",
+      "parentId": "wrk_clean_arch_api",
+      "name": "Listar Assuntos",
+      "method": "GET",
+      "url": "{{ base_url }}/assuntos"
+    },
+
+
+    {
+      "_id": "req_create_conteudo",
+      "_type": "request",
+      "parentId": "wrk_clean_arch_api",
+      "name": "Solicitar Geração de Conteúdo",
+      "method": "POST",
+      "url": "{{ base_url }}/conteudos",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"assuntoId\": \"{{ assunto_id }}\",\n  \"nivel\": \"iniciante\",\n  \"formato\": \"texto\"\n}"
+      }
+    },
+    {
+      "_id": "req_status_conteudo",
+      "_type": "request",
+      "parentId": "wrk_clean_arch_api",
+      "name": "Verificar Status do Conteúdo",
+      "method": "GET",
+      "url": "{{ base_url }}/conteudos/{{ request_id }}/status"
+    },
+    {
+      "_id": "req_get_conteudo",
+      "_type": "request",
+      "parentId": "wrk_clean_arch_api",
+      "name": "Obter Conteúdo Gerado",
+      "method": "GET",
+      "url": "{{ base_url }}/conteudos/{{ request_id }}"
+    }
+  ]
+}
