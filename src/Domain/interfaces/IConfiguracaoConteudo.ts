@@ -31,7 +31,15 @@ export interface Assunto {
 
 export interface DadosComuns {
   id: string;
+
+  // dados tipo chave estrangeira para BD 
+
+  serieId: string
   disciplinaId: string;
+  assuntoId: string;
+
+  //
+
   anoLetivo: string;    
   assunto: string;     
   instrucoesExtras?: string; 
@@ -60,5 +68,5 @@ export interface ConfiguracaoTarefa {
   tipoConteudo: 'tarefa'; // <--- O "Discriminador"
   numeroExercicios: number;
   incluirExemplos?: boolean;
-  prazoEntrega?: Date;
+  prazoEntrega?: Date | string; // *adicionado tipo string para evitar problemas de compatibilidade
 }
