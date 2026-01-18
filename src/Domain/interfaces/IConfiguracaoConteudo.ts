@@ -7,12 +7,14 @@ import type { AnoOuSerie, TipoConteudo } from "../Models/TiposBasicos";
 //
 
 export interface anoLetivo {
+    serieId: string;
     ano: AnoOuSerie;
     disciplinas: Array<Disciplina>;
 }
 
 export interface Disciplina {
   id: string;
+  serieId: string;
   nome: string;
   assuntos: Array<Assunto>;
 }
@@ -21,7 +23,6 @@ export interface Assunto {
   id: string;
   nome: string;
   disciplinaID: string;
-  anoLetivo: AnoOuSerie;
 }
 
 /**

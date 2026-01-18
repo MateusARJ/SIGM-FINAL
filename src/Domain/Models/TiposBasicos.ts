@@ -16,7 +16,7 @@ export type AnoOuSerie =
   | "1ª Série" 
   | "2ª Série" 
   | "3ª Série"
-  | string; // Permite anos personalizados (ex: "Educação Infantil")
+  ;
 
 // Tipos de conteúdo que podem ser gerados
 export type TipoConteudo = "aula" | "prova" | "tarefa";
