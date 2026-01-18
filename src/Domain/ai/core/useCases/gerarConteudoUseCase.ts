@@ -22,4 +22,13 @@ export class GerarConteudoUseCase {
       conteudo
     }
   }
+
+  async gerarProva(dados: GerarMaterialDTO): Promise<RespostaGeracaoDTO> {
+    const conteudo = await this.iaService.gerarProva(dados)
+
+    return {
+      tipo: 'prova',
+      conteudo
+    }
+  }
 }

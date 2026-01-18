@@ -1,4 +1,4 @@
 export interface RespostaGeracaoDTO {
-  tipo: 'planoAula' | 'atividade'
+  tipo: 'planoAula' | 'atividade' | 'prova'
   conteudo: string
 }

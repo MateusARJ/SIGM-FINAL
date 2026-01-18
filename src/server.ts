@@ -1,6 +1,7 @@
 // src/server.ts
 import express from 'express';
 import { InMemoryRepository } from './Domain/repositories/InMemoryRepository';
+import { IAClientService } from './Domain/services/IAClientService';
 
 import { AssuntoService } from './Domain/services/AssuntoService';
 import { DisciplinaService } from './Domain/services/DisciplinaService';
@@ -23,9 +24,10 @@ const repository = new InMemoryRepository();
  * 🔹 2. Cria os services
  * (alto nível, dependem apenas de interfaces)
  */
+const iaClient = new IAClientService();
 const assuntoService = new AssuntoService(repository);
 const disciplinaService = new DisciplinaService(repository);
-const conteudoService = new ConteudoService(repository);
+const conteudoService = new ConteudoService(repository, iaClient);
 
 /**
  * 🔹 3. Injeta os services nas rotas

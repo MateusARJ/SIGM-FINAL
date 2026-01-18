@@ -10,4 +10,7 @@ export interface IAService {
 
   // Gera uma atividade avaliativa alinhada à BNCC
   gerarAtividade(dados: GerarMaterialDTO): Promise<string>
+
+  // Gera uma prova alinhada à BNCC
+  gerarProva(dados: GerarMaterialDTO): Promise<string>
 }

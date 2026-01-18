@@ -93,4 +93,9 @@ export class InMemoryRepository implements IRepository {
         this.generatedContents.delete(requestId);
         return requestId;
     }
+
+    async verificarStatusGeracao(requestId: string): Promise<string> {
+        const conteudo = this.generatedContents.get(requestId);
+        return conteudo ? 'concluído' : 'não encontrado';
+    }
 }
