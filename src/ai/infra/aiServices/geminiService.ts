@@ -1,6 +1,6 @@
 // src/infra/ai/GeminiService.ts
 import { IAService } from '../../core/dtoAi/iAiService'
-import { GerarMaterialDTO } from '../../core/dtoAi/dto'
+import { GerarMaterialDTO } from '../../core/dtoAi/entradaDto'
 import bncc from '../../data/bncc/bncc.json'
 import { planoAulaPrompt } from './prompts/planoAulaPrompt'
 import { atividadePrompt } from './prompts/atividadePrompt'
@@ -37,11 +37,11 @@ export class GeminiService implements IAService {
 
     // 3️⃣ Montagem do prompt final
     const promptFinal = planoAulaPrompt
-      .replace('{{nivel}}', dados.nivel)
-      .replace('{{disciplina}}', dados.disciplina)
-      .replace('{{ano}}', dados.ano)
-      .replace('{{tema}}', dados.tema)
-      .replace('{{bnccRegras}}', bnccRegras)
+      .split('{{nivel}}').join(dados.nivel)
+      .split('{{disciplina}}').join(dados.disciplina)
+      .split('{{ano}}').join(dados.ano)
+      .split('{{tema}}').join(dados.tema)
+      .split('{{bnccRegras}}').join(bnccRegras)
 
     // 4️⃣ Retorno (mock da IA — neste ponto ainda não chamamos a API real)
     return promptFinal
@@ -56,11 +56,11 @@ export class GeminiService implements IAService {
 
     // 3️⃣ Montagem do prompt final
     const promptFinal = atividadePrompt
-      .replace('{{nivel}}', dados.nivel)
-      .replace('{{disciplina}}', dados.disciplina)
-      .replace('{{ano}}', dados.ano)
-      .replace('{{tema}}', dados.tema)
-      .replace('{{bnccRegras}}', bnccRegras)
+      .split('{{nivel}}').join(dados.nivel)
+      .split('{{disciplina}}').join(dados.disciplina)
+      .split('{{ano}}').join(dados.ano)
+      .split('{{tema}}').join(dados.tema)
+      .split('{{bnccRegras}}').join(bnccRegras)
 
     // 4️⃣ Retorno (mock da IA)
     return promptFinal

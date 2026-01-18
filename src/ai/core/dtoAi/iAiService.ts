@@ -1,6 +1,6 @@
 // src/core/ai/IAService.ts
 
-import { GerarMaterialDTO } from './dto'
+import { GerarMaterialDTO } from './entradaDto'
 
 // Contrato da IA
 export interface IAService {
