@@ -50,7 +50,7 @@ export class ConteudoService implements IConteudoService {
     return conteudo.status;
   }
 
-  async editar(requestId: string, dados: Partial<Omit<SolicitacaoConteudo, 'id'>>) {
+  async editar(requestId: string, dados: Required<Pick<RegistroConteudo, 'resultado'>>) {
     // 1. Busca o objeto completo existente
     const atual = await this.obterConteudoPorId(requestId); 
 

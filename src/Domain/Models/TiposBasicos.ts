@@ -18,8 +18,6 @@ export type AnoOuSerie =
   | "3ª Série"
   ;
 
-// Tipos de conteúdo que podem ser gerados
-export type TipoConteudo = "aula" | "prova" | "tarefa";
 
 // Status de geração do conteúdo
 export type StatusConteudo = "pendente" | "gerando" | "concluido" | "erro";
