@@ -16,7 +16,7 @@ export class ConteudoService implements IConteudoService {
   async criarSolicitacao(solicitacao: SolicitacaoConteudo): Promise<{ requestId: string }> {
     const requestId: string = uuidv4();
 
-    await this.repo.salvarConteudorResultado({
+    await this.repo.salvarConteudoResultado({
       requestId,
       solicitacao,
       status: "pendente",

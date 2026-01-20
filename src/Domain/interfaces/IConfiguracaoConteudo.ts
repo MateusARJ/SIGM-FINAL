@@ -6,9 +6,9 @@ import type { AnoOuSerie } from "../Models/TiposBasicos";
 
 //
 
-export interface anoLetivo {
+export interface AnoLetivo {
     serieId: string;
-    ano: AnoOuSerie;
+    nome: AnoOuSerie;
     disciplinas: Array<Disciplina>;
 }
 

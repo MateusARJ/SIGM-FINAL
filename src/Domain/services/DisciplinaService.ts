@@ -24,16 +24,35 @@ export class DisciplinaService implements IDisciplinaService {
         return this.repository.getDisciplinaByName(name);
     }
     async create(data: Omit<Disciplina, 'id'>): Promise<Disciplina> {
+        // 1. VALIDAÇÃO DE CAMPOS (Já existia)
         if (!data.nome || data.nome.trim() === '') {
             throw new Error("Nome da disciplina é obrigatório.");
         }
-        if (data.nome.length < 3) {
-            throw new Error("Nome da disciplina deve ter pelo menos 3 caracteres.");
+
+        // 2. VALIDAÇÃO DE INTEGRIDADE REFERENCIAL (O que faltava)
+        // Supõe-se que seu DTO de disciplina tenha um campo 'anoLetivoId' ou 'serieId'
+        if (!data.serieId) {
+            throw new Error("A disciplina deve estar associada a um Ano Letivo/Série.");
         }
 
-        const duplicado = await this.repository.getDisciplinaByName(data.nome);
+        const anoLetivoExiste = await this.repository.getAnoLetivoById(data.serieId);
+        if (!anoLetivoExiste) {
+            throw new Error("O Ano Letivo/Série informado não existe.");
+        }
+
+        // 3. VALIDAÇÃO DE DUPLICIDADE (Já existia)
+        // Nota: O ideal é verificar duplicidade DENTRO do mesmo ano.
+        // Ex: Pode ter "Matemática" no 8º Ano e "Matemática" no 9º Ano.
+        // Mas "Matemática" duas vezes no 8º Ano não pode.
+
+        const todasDisciplinas = await this.repository.getAllDisciplinas();
+        const duplicado = todasDisciplinas.find(d =>
+            d.nome.toLowerCase() === data.nome.toLowerCase() &&
+            d.serieId === data.serieId
+        );
+
         if (duplicado) {
-            throw new Error("Já existe uma disciplina com este nome.");
+            throw new Error(`A disciplina '${data.nome}' já existe neste Ano Letivo.`);
         }
 
         const newDisciplina: Disciplina = {
