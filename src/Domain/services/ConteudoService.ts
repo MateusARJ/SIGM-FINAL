@@ -3,8 +3,6 @@ import { IRepository } from "../interfaces/IRepository";
 import { SolicitacaoConteudo, RegistroConteudo } from "../Models/RequisicaoModelo";
 import { v4 as uuidv4 } from 'uuid';
 import { IIAClient } from "../interfaces/IIAClienteService";
-import { conteudoRoutes } from "../http/routes/conteudo.routes";
-
 
 export class ConteudoService implements IConteudoService {
   constructor(

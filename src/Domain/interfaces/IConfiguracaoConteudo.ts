@@ -30,7 +30,7 @@ export interface Assunto {
  */
 
 export interface DadosComuns {
-  id: string;
+  // retirado id da solicitação (já que requestId está em RegistroConteudo)
 
   // dados tipo chave estrangeira para BD 
 
@@ -41,7 +41,7 @@ export interface DadosComuns {
   //
 
   anoLetivo: string;    
-  assunto: string;     
+  assuntoTitulo: string;     
   instrucoesExtras?: string; 
 }
 

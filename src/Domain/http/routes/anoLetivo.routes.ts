@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { IAnoLetivoService } from '../../interfaces/IAnoLetivoService';
 
-export function disciplinaRoutes(service: IAnoLetivoService) {
+export function anoLetivoRoutes(service: IAnoLetivoService) {
   const router = Router();
 
   router.get('/', async (req, res) => {
