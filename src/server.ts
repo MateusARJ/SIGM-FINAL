@@ -7,6 +7,8 @@ import { DisciplinaService } from './Domain/services/DisciplinaService';
 import { ConteudoService } from './Domain/services/ConteudoService';
 import { AnoLetivoService } from './Domain/services/AnoLetivoServices';
 
+import { CriarConteudoUseCase } from "../src/Domain/usecases/CriarConteudoUsecase";
+
 import { assuntoRoutes } from './Domain/http/routes/assunto.routes';
 import { disciplinaRoutes } from './Domain/http/routes/disciplina.routes';
 import { conteudoRoutes } from './Domain/http/routes/conteudo.routes';
@@ -23,6 +25,7 @@ app.use(express.json());
  */
 const repository = new InMemoryRepository();
 const ia = new IAClientService();
+const usecase = new CriarConteudoUseCase(repository, ia)
 
 /**
  * 🔹 2. Cria os services
@@ -30,7 +33,7 @@ const ia = new IAClientService();
  */
 const assuntoService = new AssuntoService(repository);
 const disciplinaService = new DisciplinaService(repository);
-const conteudoService = new ConteudoService(repository, ia);
+const conteudoService = new ConteudoService(usecase);
 const anoLetivoService = new AnoLetivoService(repository);
 
 /**
