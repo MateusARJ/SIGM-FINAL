@@ -1,4 +1,5 @@
 // src/infra/ai/GeminiService.ts
+import 'dotenv/config';
 import { IAService } from '../../core/dtoAi/iAiService'
 import { GerarMaterialDTO } from '../../core/dtoAi/entradaDto'
 import bncc from '../../data/bncc/bncc.json'

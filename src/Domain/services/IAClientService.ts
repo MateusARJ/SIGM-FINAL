@@ -32,17 +32,18 @@ export class IAClientService implements IIAClient {
 
       // 2️⃣ CHAMA A IA baseado no tipo de conteúdo
       let resposta;
-      if ('numeroSlides' in solicitacao) {
-        // É uma solicitação de aula
-        resposta = await this.gerarConteudoUseCase.gerarPlano(materialDTO);
-      } else if ('numeroQuestoes' in solicitacao) {
-        // É uma solicitação de prova
-        resposta = await this.gerarConteudoUseCase.gerarProva(materialDTO);
-      } else if ('numeroExercicios' in solicitacao) {
-        // É uma solicitação de tarefa
-        resposta = await this.gerarConteudoUseCase.gerarAtividade(materialDTO);
-      } else {
-        throw new Error('Tipo de conteúdo não identificável');
+      switch (solicitacao.tipoConteudo) {
+        case "aula":
+          resposta = await this.gerarConteudoUseCase.gerarPlano(materialDTO);
+          break;
+        case "prova":
+          resposta = await this.gerarConteudoUseCase.gerarProva(materialDTO);
+          break;
+        case "tarefa":
+          resposta = await this.gerarConteudoUseCase.gerarAtividade(materialDTO);
+          break;
+        default:
+          throw new Error('Tipo de conteúdo não identificável');
       }
 
       // 3️⃣ RETORNA o resultado da IA
