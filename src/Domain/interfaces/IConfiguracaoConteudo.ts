@@ -1,4 +1,4 @@
-import type { AnoOuSerie, TipoConteudo } from "../Models/TiposBasicos";
+import type { AnoOuSerie } from "../Models/TiposBasicos";
 
 // ============================================
 // INTERFACES (Objetos Complexos)
@@ -6,13 +6,15 @@ import type { AnoOuSerie, TipoConteudo } from "../Models/TiposBasicos";
 
 //
 
-export interface anoLetivo {
-    ano: AnoOuSerie;
+export interface AnoLetivo {
+    serieId: string;
+    nome: AnoOuSerie;
     disciplinas: Array<Disciplina>;
 }
 
 export interface Disciplina {
   id: string;
+  serieId: string;
   nome: string;
   assuntos: Array<Assunto>;
 }
@@ -21,7 +23,6 @@ export interface Assunto {
   id: string;
   nome: string;
   disciplinaID: string;
-  anoLetivo: AnoOuSerie;
 }
 
 /**
@@ -29,10 +30,18 @@ export interface Assunto {
  */
 
 export interface DadosComuns {
-  id: string;
+  // retirado id da solicitação (já que requestId está em RegistroConteudo)
+
+  // dados tipo chave estrangeira para BD 
+
+  serieId: string
   disciplinaId: string;
+  assuntoId: string;
+
+  //
+
   anoLetivo: string;    
-  assunto: string;     
+  assuntoTitulo: string;     
   instrucoesExtras?: string; 
 }
 
@@ -59,5 +68,5 @@ export interface ConfiguracaoTarefa {
   tipoConteudo: 'tarefa'; // <--- O "Discriminador"
   numeroExercicios: number;
   incluirExemplos?: boolean;
-  prazoEntrega?: Date;
+  prazoEntrega?: Date | string; // *adicionado tipo string para evitar problemas de compatibilidade
 }
