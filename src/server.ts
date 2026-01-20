@@ -2,7 +2,6 @@
 import express from 'express';
 import { InMemoryRepository } from './Domain/repositories/InMemoryRepository';
 import { IAClientService } from './Domain/services/IAClientService';
-
 import { AssuntoService } from './Domain/services/AssuntoService';
 import { DisciplinaService } from './Domain/services/DisciplinaService';
 import { ConteudoService } from './Domain/services/ConteudoService';
@@ -13,8 +12,6 @@ import { disciplinaRoutes } from './Domain/http/routes/disciplina.routes';
 import { conteudoRoutes } from './Domain/http/routes/conteudo.routes';
 import { anoLetivoRoutes } from './Domain/http/routes/anoLetivo.routes';
 
-import { IAClientService } from './Domain/services/IAClientService';
-
 const app = express();
 app.use(express.json());
 
@@ -23,7 +20,6 @@ app.use(express.json());
  * (baixo nível)
  */
 const repository = new InMemoryRepository();
-const ia = new IAClientService();
 
 /**
  * 🔹 2. Cria os services
@@ -33,6 +29,7 @@ const iaClient = new IAClientService();
 const assuntoService = new AssuntoService(repository);
 const disciplinaService = new DisciplinaService(repository);
 const conteudoService = new ConteudoService(repository, iaClient);
+const anoLetivoService = new AnoLetivoService(repository);
 
 /**
  * 🔹 3. Injeta os services nas rotas
