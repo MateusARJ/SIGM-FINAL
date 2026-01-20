@@ -18,6 +18,5 @@ export type AnoOuSerie =
   | "3ª Série"
   ;
 
-
 // Status de geração do conteúdo
 export type StatusConteudo = "pendente" | "gerando" | "concluido" | "erro";
