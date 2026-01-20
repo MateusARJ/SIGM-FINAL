@@ -1,11 +1,12 @@
 import type { IRepository } from "../interfaces/IRepository";
 import type { Assunto, Disciplina } from "../interfaces/IConfiguracaoConteudo";
+import { RegistroConteudo } from "../Models/RequisicaoModelo";
 
 export class InMemoryRepository implements IRepository {
     // Simulando o Banco de Dados com Maps (Chave -> Valor)
     private disciplinas: Map<string, Disciplina> = new Map();
     private assuntos: Map<string, Assunto> = new Map();
-    private generatedContents: Map<string, { requestId: string; contentUrl: string }> = new Map();
+    private generatedContents: Map<string, RegistroConteudo> = new Map();
 
     // ========================
     // DISCIPLINA
@@ -96,6 +97,7 @@ export class InMemoryRepository implements IRepository {
 
     async verificarStatusGeracao(requestId: string): Promise<string> {
         const conteudo = this.generatedContents.get(requestId);
-        return conteudo ? 'concluído' : 'não encontrado';
+        if (!conteudo) throw new Error("Não encontrado");
+        return conteudo.status;
     }
 }
