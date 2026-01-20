@@ -11,13 +11,13 @@ export class IAClientService implements IIAClient {
         let conteudoGerado = "Teste";
         switch (solicitacao.tipoConteudo) {
             case "aula":
-                conteudoGerado = `Conteúdo da aula sobre ${solicitacao.assunto} para o ${solicitacao.anoLetivo}.`;
+                conteudoGerado = `Conteúdo da aula sobre ${solicitacao.assuntoTitulo} para o ${solicitacao.anoLetivo}.`;
                 break;
             case "prova":
-                conteudoGerado = `Conteúdo da prova sobre ${solicitacao.assunto} para o ${solicitacao.anoLetivo}.`;
+                conteudoGerado = `Conteúdo da prova sobre ${solicitacao.assuntoTitulo} para o ${solicitacao.anoLetivo}.`;
                 break;
             case "tarefa":
-                conteudoGerado = `Conteúdo da tarefa sobre ${solicitacao.assunto} para o ${solicitacao.anoLetivo}.`;
+                conteudoGerado = `Conteúdo da tarefa sobre ${solicitacao.assuntoTitulo} para o ${solicitacao.anoLetivo}.`;
                 break;
             default:
                 conteudoGerado = "Tipo de conteúdo desconhecido.";
