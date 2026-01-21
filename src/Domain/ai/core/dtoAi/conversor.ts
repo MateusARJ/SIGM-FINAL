@@ -29,7 +29,7 @@ export function converterSolicitacaoParaGerarMaterialDTO(
   return {
     disciplina: solicitacao.disciplinaId,
     ano: solicitacao.anoLetivo,
-    tema: solicitacao.assunto,
+    tema: solicitacao.assuntoId,
     nivel: nivelEnsino
   };
 }
