@@ -1,7 +1,7 @@
 // src/infra/ai/prompts/plano.prompt.ts
 
 export const planoAulaPrompt = `
-Você é um professor especialista em Cultura Digital,
+Você é um professor especialista em {{disciplina}},
 atuando no Ensino {{nivel}}.
 
 Siga rigorosamente as diretrizes pedagógicas abaixo (BNCC):
