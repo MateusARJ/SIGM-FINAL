@@ -23,6 +23,17 @@ export class AssuntoService implements IAssuntoService {
     const all = await this.repository.getAllAssuntos();
     return all.find(a => a.nome.toLowerCase() === name.toLowerCase());
   }
+  
+   /**
+   * findAssuntoByDisciplina
+   * Busca todos os assuntos associados a uma disciplina específica.
+   * 
+   * @param disciplinaId - O ID da disciplina cujos assuntos serão buscados.
+   * @returns Uma Promise que resolve para um array de objetos Assunto.
+   */
+  async findAssuntoByDisciplina(disciplinaId: string): Promise<Assunto[]> {
+    return this.repository.getAssuntosByDisciplina(disciplinaId);
+  }
 
   async create(data: Omit<Assunto, 'id'>): Promise<Assunto> {
     // 1. Valida se a disciplina existe (Regra de Negócio)

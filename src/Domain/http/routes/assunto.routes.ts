@@ -9,15 +9,7 @@ export function assuntoRoutes(service: IAssuntoService) {
     res.json(assuntos);
   });
 
-  router.get('/:id', async (req, res) => {
-    try {
-      const assunto = await service.get(req.params.id);
-      res.json(assunto);
-    } catch (err: any) {
-      res.status(404).json({ error: err.message });
-    }
-  });
-
+    // PRIMEIRO as rotas /search
   router.get('/search/:name', async (req, res) => {
 
     try {
@@ -28,6 +20,35 @@ export function assuntoRoutes(service: IAssuntoService) {
     }
     catch (err: any) {
       res.status(404).json({ error: 'Assunto not found' });
+    }
+  });
+
+  /**
+   * findAssuntoByDisciplina
+   * Busca todos os assuntos associados a uma disciplina específica.
+   * 
+   * @param disciplinaId - O ID da disciplina cujos assuntos serão buscados.
+   * @returns Uma Promise que resolve para um array de objetos Assunto.
+   */
+  router.get('/search/disciplina/:disciplinaId', async (req, res) => {
+    try {
+      const assuntos = await service.findAssuntoByDisciplina(req.params.disciplinaId);
+      if (assuntos.length > 0) {
+        res.json(assuntos);
+      } else {
+        res.status(404).json({ error: 'Nenhum assunto encontrado para esta disciplina' });
+      }
+    } catch (err: any) {
+      res.status(404).json({ error: err.message });
+    }
+  });
+
+  router.get('/:id', async (req, res) => {
+    try {
+      const assunto = await service.get(req.params.id);
+      res.json(assunto);
+    } catch (err: any) {
+      res.status(404).json({ error: err.message });
     }
   });
 

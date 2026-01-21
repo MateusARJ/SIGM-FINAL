@@ -95,6 +95,14 @@
       "name": "Obter Conteúdo Gerado",
       "method": "GET",
       "url": "{{ base_url }}/conteudos/{{ request_id }}"
+    },
+    {
+      "_id": "req_get_assuntos_by_disciplina",
+      "_type": "request",
+      "parentId": "wrk_clean_arch_api",
+      "name": "Buscar Assuntos por Disciplina",
+      "method": "GET",
+      "url": "{{ base_url }}/assuntos/search/disciplina/disciplina_id"
     }
   ]
 }
