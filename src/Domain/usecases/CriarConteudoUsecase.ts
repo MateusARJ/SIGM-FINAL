@@ -48,14 +48,35 @@ export class CriarConteudoUseCase {
             atualizadoEm: new Date()
         });
 
-        const resposta = await this.ia.gerarConteudo(solicitacao);
+        // forma sincrona (apenas quando a ia responder e caso responder volta resposta)
 
-        await this.repo.atualizarConteudo({
-            requestId,
-            status: "concluido",
-            resultado: resposta,
-            atualizadoEm: new Date()
-        });
+        // const resposta = await this.ia.gerarConteudo(solicitacao);
+
+        // await this.repo.atualizarConteudo({
+        //     requestId,
+        //     status: "concluido",
+        //     resultado: resposta,
+        //     atualizadoEm: new Date()
+        // });
+
+        // forma assincrona (dispara erro se der erro, mas não trava o fluxo)
+
+        this.ia.gerarConteudo(solicitacao)
+            .then(resposta => {
+                this.repo.atualizarConteudo({
+                    requestId,
+                    status: "concluido",
+                    resultado: resposta,
+                    atualizadoEm: new Date()
+                });
+            })
+            .catch(err => {
+                this.repo.atualizarConteudo({
+                    requestId,
+                    status: "erro",
+                    atualizadoEm: new Date()
+                });
+            });
 
         return requestId;
 
