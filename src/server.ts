@@ -39,6 +39,7 @@ const obterUseCase = new ObterConteudoUseCase(repository)
  * 🔹 2. Cria os services
  * (alto nível, dependem apenas de interfaces)
  */
+const iaClient = new IAClientService();
 const assuntoService = new AssuntoService(repository);
 const disciplinaService = new DisciplinaService(repository);
 const conteudoService = new ConteudoService(criarUseCase, obterUseCase, verificarUseCase, editarUseCase, excluirUseCase);

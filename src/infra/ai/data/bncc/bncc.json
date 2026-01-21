@@ -1,0 +1,21 @@
+{
+  "competencias_gerais": [
+    "Utilizar tecnologias digitais de forma crítica, ética e responsável",
+    "Produzir, comunicar e compartilhar conhecimentos em diferentes linguagens",
+    "Exercitar o pensamento crítico e a autonomia intelectual"
+  ],
+  "regras_por_nivel": {
+    "fundamental": [
+      "Utilizar linguagem simples e acessível",
+      "Apresentar exemplos do cotidiano do aluno",
+      "Propor atividades práticas e orientadas",
+      "Evitar excesso de termos técnicos"
+    ],
+    "medio": [
+      "Utilizar linguagem mais analítica e argumentativa",
+      "Estimular o pensamento crítico e o debate",
+      "Relacionar o conteúdo com questões sociais e tecnológicas",
+      "Propor atividades investigativas"
+    ]
+  }
+}

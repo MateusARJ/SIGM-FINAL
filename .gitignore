@@ -37,3 +37,9 @@ logs/
 # ===============================
 .DS_Store
 Thumbs.db
+
+# ===============================
+# EXPLICAÇÕES
+# ===============================
+.ARQUITETURA_CONEXAO_IA.md
+.EXPLICACAO_SERVICES_E_FLUXO.md
