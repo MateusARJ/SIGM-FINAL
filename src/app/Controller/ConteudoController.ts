@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { IConteudoService } from "../../interfaces/IConteudoService";
+import { IConteudoService } from "../../domain/interfaces/IConteudoService";
 
 export function conteudoRoutes(conteudoService: IConteudoService) {
   const router = Router();
@@ -12,8 +12,12 @@ export function conteudoRoutes(conteudoService: IConteudoService) {
     try {
       const requestId = await conteudoService.criarSolicitacao(req.body);
       res.status(202).json({ requestId });
-    } catch (error: any) {
-      res.status(400).json({ error: error.message });
+    } catch (error) {
+      if (error instanceof Error) {
+        res.status(400).json({ error: error.message });
+      } else {
+        res.status(500).json({ error: "Erro inesperado" });
+      }
     }
   });
 
@@ -27,8 +31,12 @@ export function conteudoRoutes(conteudoService: IConteudoService) {
         req.params.requestId
       );
       res.json({ status });
-    } catch (error: any) {
-      res.status(404).json({ error: error.message });
+    } catch (error) {
+      if (error instanceof Error) {
+        res.status(400).json({ error: error.message });
+      } else {
+        res.status(500).json({ error: "Erro inesperado" });
+      }
     }
   });
 
@@ -36,14 +44,18 @@ export function conteudoRoutes(conteudoService: IConteudoService) {
    * Obtém o conteúdo gerado
    * GET /conteudos/:requestId
    */
-  router.get("/:requestId", async (req, res) => {
+  router.get("/:requestId/result", async (req, res) => {
     try {
       const conteudo = await conteudoService.obterConteudoPorId(
         req.params.requestId
       );
       res.json(conteudo);
-    } catch (error: any) {
-      res.status(404).json({ error: error.message });
+    } catch (error) {
+      if (error instanceof Error) {
+        res.status(400).json({ error: error.message });
+      } else {
+        res.status(500).json({ error: "Erro inesperado" });
+      }
     }
   });
 
@@ -58,8 +70,12 @@ export function conteudoRoutes(conteudoService: IConteudoService) {
         req.body
       );
       res.json({ requestId });
-    } catch (error: any) {
-      res.status(400).json({ error: error.message });
+    } catch (error) {
+      if (error instanceof Error) {
+        res.status(400).json({ error: error.message });
+      } else {
+        res.status(500).json({ error: "Erro inesperado" });
+      }
     }
   });
 
@@ -67,10 +83,13 @@ export function conteudoRoutes(conteudoService: IConteudoService) {
     try {
       const requestId = await conteudoService.excluir(req.params.requestId);
       res.json({ requestId });
-    } catch (error: any) {
-      res.status(400).json({ error: error.message })
+    } catch (error) {
+      if (error instanceof Error) {
+        res.status(400).json({ error: error.message });
+      } else {
+        res.status(500).json({ error: "Erro inesperado" });
+      }
     }
-      
   })
 
 

@@ -1,18 +1,18 @@
 import { Router } from 'express';
-import { IAnoLetivoService } from '../../interfaces/IAnoLetivoService';
+import { IDisciplinaService } from '../../domain/interfaces/IDisciplinaService';
 
-export function anoLetivoRoutes(service: IAnoLetivoService) {
+export function disciplinaRoutes(service: IDisciplinaService) {
   const router = Router();
 
   router.get('/', async (req, res) => {
-    const anosLetivos = await service.list();
-    res.json(anosLetivos);
+    const disciplinas = await service.list();
+    res.json(disciplinas);
   });
 
   router.get('/:id', async (req, res) => {
     try {
-      const anoLetivo = await service.get(req.params.id);
-      res.json(anoLetivo);
+      const disciplina = await service.get(req.params.id);
+      res.json(disciplina);
     } catch (err: any) {
       res.status(404).json({ error: err.message });
     }
@@ -20,8 +20,8 @@ export function anoLetivoRoutes(service: IAnoLetivoService) {
 
   router.get('/search/:name', async (req, res) => {
     try {
-        const anoLetivo = await service.findByName(req.params.name);
-      res.json(anoLetivo);
+        const disciplina = await service.findByName(req.params.name);
+      res.json(disciplina);
     } catch (err: any) {
       res.status(404).json({ error: err.message });
     }
@@ -51,8 +51,8 @@ export function anoLetivoRoutes(service: IAnoLetivoService) {
 
   router.put('/:id', async (req, res) => {
     try {
-      const editado =await service.update(req.params.id, req.body);
-      res.json(editado);
+      await service.update(req.params.id, req.body);
+      res.sendStatus(204);
     } catch (err: any) {
       res.status(400).json({ error: err.message });
     }

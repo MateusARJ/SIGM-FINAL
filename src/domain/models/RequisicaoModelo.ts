@@ -26,7 +26,7 @@ export type SolicitacaoConteudo = DadosComuns & (
 export interface RegistroConteudo {
   requestId: string;
   solicitacao: SolicitacaoConteudo; // <--- A solicitação fica ANINHADA aqui
-  status: "pendente" | "processando" | "concluido" | "erro";
+  status: "pendente" | "processando" | "concluido" | "erro" | "editado";
   resultado?: { tipo: string; conteudo: string }; // O retorno da IA (opcional no início)
   criadoEm: Date;
   atualizadoEm: Date;

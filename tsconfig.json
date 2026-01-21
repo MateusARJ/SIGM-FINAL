@@ -31,10 +31,6 @@
     "moduleDetection": "force",
     "skipLibCheck": true
   },
-  "include": [
-    "src/**/*",
-    "src/Domain/http/middlewares",
-    "src/Domain/http/routes/assunto.routes.ts"
-  ],
+  "include": ["src/**/*", "src/domain/http/middlewares", "src/app/routes/assunto.routes.ts"],
   "exclude": ["node_modules"]
 }

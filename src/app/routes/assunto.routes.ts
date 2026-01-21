@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { IAssuntoService } from '../../interfaces/IAssuntoService';
+import { IAssuntoService } from '../../domain/interfaces/IAssuntoService';
 
 export function assuntoRoutes(service: IAssuntoService) {
   const router = Router();

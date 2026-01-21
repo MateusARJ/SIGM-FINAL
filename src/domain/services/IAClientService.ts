@@ -1,8 +1,8 @@
 import { IIAClient } from "../interfaces/IIAClienteService";
-import { SolicitacaoConteudo } from "../Models/RequisicaoModelo";
-import { GeminiService } from "../ai/infra/aiServices/geminiService";
-import { GerarConteudoUseCase } from "../ai/core/useCases/gerarConteudoUseCase";
-import { converterSolicitacaoParaGerarMaterialDTO } from "../ai/core/dtoAi/conversor";
+import { SolicitacaoConteudo } from "../models/RequisicaoModelo";
+import { GeminiService } from "../../infra/ai/infra/aiServices/geminiService";
+import { GerarConteudoUseCase } from "../../infra/ai/core/useCases/gerarConteudoUseCase";
+import { converterSolicitacaoParaGerarMaterialDTO } from "../../infra/ai/core/dtoAi/conversor";
 
 /**
  * IAClientService: Adaptador entre a camada de Services e a camada AI
@@ -22,7 +22,7 @@ export class IAClientService implements IIAClient {
     this.gerarConteudoUseCase = new GerarConteudoUseCase(geminiService);
   }
 
-  async gerarConteudo(
+  async gerarConteudoAsync(
     solicitacao: SolicitacaoConteudo
   ): Promise<{ tipo: string; conteudo: string }> {
     
