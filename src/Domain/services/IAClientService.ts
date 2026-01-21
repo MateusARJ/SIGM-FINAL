@@ -1,31 +1,59 @@
-// import { ficticio } from ia-sdk; // Exemplo fictício de importação de um SDK de IA
 import { IIAClient } from "../interfaces/IIAClienteService";
 import { SolicitacaoConteudo } from "../Models/RequisicaoModelo";
+import { GeminiService } from "../ai/infra/aiServices/geminiService";
+import { GerarConteudoUseCase } from "../ai/core/useCases/gerarConteudoUseCase";
+import { converterSolicitacaoParaGerarMaterialDTO } from "../ai/core/dtoAi/conversor";
 
+/**
+ * IAClientService: Adaptador entre a camada de Services e a camada AI
+ * 
+ * Responsabilidades:
+ * 1. Receber SolicitacaoConteudo (formato dos Services)
+ * 2. Converter para GerarMaterialDTO (formato da IA)
+ * 3. Chamar GeminiService para gerar conteúdo
+ * 4. Retornar resultado ao ConteudoService
+ */
 export class IAClientService implements IIAClient {
-    async gerarConteudo(solicitacao: SolicitacaoConteudo): Promise<{ tipo: string; conteudo: string; }> {
-        // Implementação fictícia para simular a geração de conteúdo pela IA
-        // Em um cenário real, aqui você faria uma chamada para um serviço de IA (como OpenAI, etc.)
+  private gerarConteudoUseCase: GerarConteudoUseCase;
 
-        // Simulação simples baseada no tipo de conteúdo solicitado
-        let conteudoGerado = "Teste";
-        switch (solicitacao.tipoConteudo) {
-            case "aula":
-                conteudoGerado = `Conteúdo da aula sobre ${solicitacao.assuntoTitulo} para o ${solicitacao.anoLetivo}.`;
-                break;
-            case "prova":
-                conteudoGerado = `Conteúdo da prova sobre ${solicitacao.assuntoTitulo} para o ${solicitacao.anoLetivo}.`;
-                break;
-            case "tarefa":
-                conteudoGerado = `Conteúdo da tarefa sobre ${solicitacao.assuntoTitulo} para o ${solicitacao.anoLetivo}.`;
-                break;
-            default:
-                conteudoGerado = "Tipo de conteúdo desconhecido.";
-        }
+  constructor() {
+    // Instancia os serviços da camada AI
+    const geminiService = new GeminiService();
+    this.gerarConteudoUseCase = new GerarConteudoUseCase(geminiService);
+  }
 
-        return {
-            tipo: solicitacao.tipoConteudo,
-            conteudo: conteudoGerado
-        };
+  async gerarConteudo(
+    solicitacao: SolicitacaoConteudo
+  ): Promise<{ tipo: string; conteudo: string }> {
+    
+    try {
+      // 1️⃣ CONVERTE: SolicitacaoConteudo → GerarMaterialDTO
+      const materialDTO = converterSolicitacaoParaGerarMaterialDTO(solicitacao);
+
+      // 2️⃣ CHAMA A IA baseado no tipo de conteúdo
+      let resposta;
+      switch (solicitacao.tipoConteudo) {
+        case "aula":
+          resposta = await this.gerarConteudoUseCase.gerarPlano(materialDTO);
+          break;
+        case "prova":
+          resposta = await this.gerarConteudoUseCase.gerarProva(materialDTO);
+          break;
+        case "tarefa":
+          resposta = await this.gerarConteudoUseCase.gerarAtividade(materialDTO);
+          break;
+        default:
+          throw new Error('Tipo de conteúdo não identificável');
+      }
+
+      // 3️⃣ RETORNA o resultado da IA
+      return {
+        tipo: resposta.tipo,
+        conteudo: resposta.conteudo
+      };
+    } catch (error) {
+      console.error('Erro ao gerar conteúdo na IA:', error);
+      throw error;
     }
+  }
 }
