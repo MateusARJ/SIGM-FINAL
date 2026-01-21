@@ -1,5 +1,5 @@
 import type { Assunto, Disciplina, AnoLetivo } from "./IConfiguracaoConteudo"; // Nota: Ajustei para AnoLetivo (Maiúscula) que é o padrão de Types
-import { SolicitacaoConteudo, RegistroConteudo } from "../Models/RequisicaoModelo";
+import { SolicitacaoConteudo, RegistroConteudo } from "../models/RequisicaoModelo";
 
 // ============================================
 // INTERFACES (Repositório)

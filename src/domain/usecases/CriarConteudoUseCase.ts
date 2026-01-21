@@ -1,7 +1,7 @@
 import { IRepository } from "../interfaces/IRepository";
 import { IIAClient } from "../interfaces/IIAClienteService";
 import { IAClientService } from "../services/IAClientService";
-import { SolicitacaoConteudo, RegistroConteudo } from "../Models/RequisicaoModelo";
+import { SolicitacaoConteudo, RegistroConteudo } from "../models/RequisicaoModelo";
 
 import { v4 as uuid } from "uuid";
 
@@ -37,7 +37,7 @@ export class CriarConteudoUseCase {
         private ia: IIAClient
     ) { }
 
-    async execute(solicitacao: SolicitacaoConteudo): Promise<string> {
+    async execute(solicitacao: SolicitacaoConteudo): Promise<{ requestId: string }> {
         const requestId = uuid();
 
         await this.repo.salvarConteudoResultado({
@@ -61,56 +61,27 @@ export class CriarConteudoUseCase {
 
         // forma assincrona (dispara erro se der erro, mas não trava o fluxo)
 
-        this.ia.gerarConteudo(solicitacao)
-            .then(resposta => {
-                this.repo.atualizarConteudo({
+        this.ia.gerarConteudoAsync(solicitacao)
+            .then(async resposta => {
+                await this.repo.atualizarConteudo({
                     requestId,
                     status: "concluido",
                     resultado: resposta,
                     atualizadoEm: new Date()
                 });
             })
-            .catch(err => {
-                this.repo.atualizarConteudo({
+            .catch(async err => {
+                console.error("Erro ao gerar conteúdo pela IA:", err);
+                
+                await this.repo.atualizarConteudo({
                     requestId,
                     status: "erro",
                     atualizadoEm: new Date()
                 });
             });
 
-        return requestId;
+        return {requestId};
 
-    }
-    async obterConteudoPorId(requestId: string) {
-        const conteudo = await this.repo.buscarConteudoPorId(requestId);
-        if (!conteudo) throw new Error("Não encontrado");
-        return conteudo;
-    }
-
-    async verificarStatusGeracao(requestId: string) {
-        const conteudo = await this.obterConteudoPorId(requestId);
-        return conteudo.status;
-    }
-
-    async editar(requestId: string, dados: Required<Pick<RegistroConteudo, 'resultado'>>) {
-        // 1. Busca o objeto completo existente
-        const atual = await this.obterConteudoPorId(requestId);
-
-        // 2. Cria um NOVO objeto mesclando o antigo com as atualizações
-        const objetoAtualizado = {
-            ...atual,  // Espalha: id, disciplinaId, tipoConteudo, numeroSlides...
-            ...dados,  // Sobrescreve apenas os campos que vieram na edição
-            status: "pendente" // Atualiza o status
-        };
-
-        // 3. Salva o objeto já mesclado
-        await this.repo.atualizarConteudo(objetoAtualizado);
-        return { requestId }
-    }
-
-    async excluir(requestId: string) {
-        await this.repo.removerConteudo(requestId);
-        return { requestId };
     }
 }
 

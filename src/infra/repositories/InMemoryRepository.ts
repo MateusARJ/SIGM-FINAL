@@ -1,6 +1,6 @@
-import type { IRepository } from "../interfaces/IRepository"; // Ajuste o caminho conforme sua pasta
-import type { Assunto, Disciplina, AnoLetivo } from "../interfaces/IConfiguracaoConteudo";
-import { RegistroConteudo } from "../Models/RequisicaoModelo";
+import type { IRepository } from "../../domain/interfaces/IRepository"; // Ajuste o caminho conforme sua pasta
+import type { Assunto, Disciplina, AnoLetivo } from "../../domain/interfaces/IConfiguracaoConteudo";
+import { RegistroConteudo } from "../../domain/models/RequisicaoModelo";
 
 export class InMemoryRepository implements IRepository {
     // Simulando o Banco de Dados com Maps (Chave -> Valor)

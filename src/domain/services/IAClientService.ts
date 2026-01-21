@@ -1,9 +1,9 @@
 // import { ficticio } from ia-sdk; // Exemplo fictício de importação de um SDK de IA
 import { IIAClient } from "../interfaces/IIAClienteService";
-import { SolicitacaoConteudo } from "../Models/RequisicaoModelo";
+import { SolicitacaoConteudo } from "../models/RequisicaoModelo";
 
 export class IAClientService implements IIAClient {
-    async gerarConteudo(solicitacao: SolicitacaoConteudo): Promise<{ tipo: string; conteudo: string; }> {
+    async gerarConteudoAsync(solicitacao: SolicitacaoConteudo): Promise<{ tipo: string; conteudo: string; }> {
         // Implementação fictícia para simular a geração de conteúdo pela IA
         // Em um cenário real, aqui você faria uma chamada para um serviço de IA (como OpenAI, etc.)
 

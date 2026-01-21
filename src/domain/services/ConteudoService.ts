@@ -1,6 +1,6 @@
 import { IConteudoService } from "../interfaces/IConteudoService";
 import { IRepository } from "../interfaces/IRepository";
-import { SolicitacaoConteudo, RegistroConteudo } from "../Models/RequisicaoModelo";
+import { SolicitacaoConteudo, RegistroConteudo } from "../models/RequisicaoModelo";
 
 import { ObterConteudoUseCase } from "../usecases/ObterConteudoUseCase";
 import { VerificarStatusUseCase } from "../usecases/VerificarStatusUseCase";

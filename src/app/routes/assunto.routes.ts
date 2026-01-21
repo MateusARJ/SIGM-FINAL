@@ -1,44 +1,35 @@
 import { Router } from 'express';
-import { IDisciplinaService } from '../../interfaces/IDisciplinaService';
+import { IAssuntoService } from '../../domain/interfaces/IAssuntoService';
 
-export function disciplinaRoutes(service: IDisciplinaService) {
+export function assuntoRoutes(service: IAssuntoService) {
   const router = Router();
 
   router.get('/', async (req, res) => {
-    const disciplinas = await service.list();
-    res.json(disciplinas);
+    const assuntos = await service.list();
+    res.json(assuntos);
   });
 
   router.get('/:id', async (req, res) => {
     try {
-      const disciplina = await service.get(req.params.id);
-      res.json(disciplina);
+      const assunto = await service.get(req.params.id);
+      res.json(assunto);
     } catch (err: any) {
       res.status(404).json({ error: err.message });
     }
   });
 
   router.get('/search/:name', async (req, res) => {
+
     try {
-        const disciplina = await service.findByName(req.params.name);
-      res.json(disciplina);
-    } catch (err: any) {
-      res.status(404).json({ error: err.message });
+      const assunto = await service.findByName(req.params.name);
+      if (assunto) {
+        res.json(assunto);
+      }
+    }
+    catch (err: any) {
+      res.status(404).json({ error: 'Assunto not found' });
     }
   });
-
-//   router.post('/', async (req, res) => {
-//   console.log("HEADERS:", req.headers);
-//   console.log("BODY:", req.body);
-
-//   try {
-//     const criado = await service.create(req.body);
-//     res.status(201).json(criado);
-//   } catch (err: any) {
-//     res.status(400).json({ error: err.message });
-//   }
-// });
-
 
   router.post('/', async (req, res) => {
     try {

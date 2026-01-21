@@ -1,6 +1,6 @@
 import { IRepository } from "../interfaces/IRepository";
 import { IIAClient } from "../interfaces/IIAClienteService";
-import { RegistroConteudo } from "../Models/RequisicaoModelo";
+import { RegistroConteudo } from "../models/RequisicaoModelo";
 import { ObterConteudoUseCase } from "./ObterConteudoUseCase";
 
 export class EditarConteudoUseCase {
@@ -10,6 +10,7 @@ export class EditarConteudoUseCase {
     async execute(requestId: string, dados: Required<Pick<RegistroConteudo, 'resultado'>>) {
         // 1. Busca o objeto completo existente
         const atual = await this.repo.buscarConteudoPorId(requestId);
+        if (!atual) throw new Error("Conteúdo não encontrado");
 
         // 2. Cria um NOVO objeto mesclando o antigo com as atualizações
         const objetoAtualizado = {
