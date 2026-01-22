@@ -12,13 +12,17 @@
   },
   "dependencies": {
     "@google/generative-ai": "^0.24.1",
+    "@prisma/client": "^6.19.2",
     "express": "^5.2.1",
+    "prisma": "^6.19.2",
+    "save-dev": "^0.0.1-security",
     "uuid": "^13.0.0"
   },
   "devDependencies": {
-    "@types/node": "^25.0.8",
     "@types/express": "^5.0.6",
+    "@types/node": "^25.0.8",
     "parcel": "^2.16.3",
+    "ts-node": "^10.9.2",
     "tsx": "^4.21.0",
     "typescript": "^5.9.3"
   },

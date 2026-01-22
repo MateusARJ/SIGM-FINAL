@@ -1,6 +1,7 @@
 // src/server.ts
 import express from 'express';
-import { InMemoryRepository } from './infra/repositories/InMemoryRepository';
+// import { InMemoryRepository } from './infra/repositories/InMemoryRepository';
+import { PrismaRepository } from './infra/repositories/PrismaRepository';
 
 import { AssuntoService } from './domain/services/AssuntoService';
 import { DisciplinaService } from './domain/services/DisciplinaService';
@@ -27,7 +28,7 @@ app.use(express.json());
  * 🔹 1. Cria a infraestrutura
  * (baixo nível)
  */
-const repository = new InMemoryRepository();
+const repository = new PrismaRepository();
 const ia = new IAClientService();
 const criarUseCase = new CriarConteudoUseCase(repository, ia)
 const editarUseCase = new EditarConteudoUseCase(repository)

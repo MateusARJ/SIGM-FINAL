@@ -43,3 +43,4 @@ Thumbs.db
 # ===============================
 .ARQUITETURA_CONEXAO_IA.md
 .EXPLICACAO_SERVICES_E_FLUXO.md
+/src/generated/prisma
