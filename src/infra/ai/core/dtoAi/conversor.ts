@@ -1,4 +1,4 @@
-import { SolicitacaoConteudo } from "../../../Models/RequisicaoModelo";
+import { SolicitacaoConteudo } from "../../../../domain/models/RequisicaoModelo";
 import { GerarMaterialDTO } from "./entradaDto";
 
 /**
@@ -8,6 +8,17 @@ import { GerarMaterialDTO } from "./entradaDto";
 export function converterSolicitacaoParaGerarMaterialDTO(
   solicitacao: SolicitacaoConteudo
 ): GerarMaterialDTO {
+  // DEBUG: Verifica se solicitacao está vindo corretamente
+  if (!solicitacao) {
+    console.error("❌ ERRO: solicitacao é undefined");
+    throw new Error("Solicitação de conteúdo é undefined");
+  }
+  
+  if (!solicitacao.anoLetivo) {
+    console.error("❌ ERRO: anoLetivo é undefined. Objeto recebido:", solicitacao);
+    throw new Error("anoLetivo é obrigatório");
+  }
+  
   // Determina o nível baseado no ano letivo
   // Fundamental: 1º ao 9º ano
   // Médio: 1ª, 2ª, 3ª série (ou 1º, 2º, 3º ano do médio)

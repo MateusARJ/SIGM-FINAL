@@ -39,6 +39,8 @@ export class CriarConteudoUseCase {
 
     async execute(solicitacao: SolicitacaoConteudo): Promise<{ requestId: string }> {
         const requestId = uuid();
+        
+        console.log("📝 CriarConteudoUseCase.execute recebido:", JSON.stringify(solicitacao, null, 2));
 
         await this.repo.salvarConteudoResultado({
             requestId,

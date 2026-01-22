@@ -41,8 +41,25 @@ export function conteudoRoutes(conteudoService: IConteudoService) {
   });
 
   /**
-   * Obtém o conteúdo gerado
-   * GET /conteudos/:requestId
+   * Obtém o conteúdo gerado   * GET /conteudos/:requestId
+   */
+  router.get("/:requestId", async (req, res) => {
+    try {
+      const conteudo = await conteudoService.obterConteudoPorId(
+        req.params.requestId
+      );
+      res.json(conteudo);
+    } catch (error) {
+      if (error instanceof Error) {
+        res.status(400).json({ error: error.message });
+      } else {
+        res.status(500).json({ error: "Erro inesperado" });
+      }
+    }
+  });
+
+  /**
+   * Obtém o conteúdo gerado (alias para /result)   * GET /conteudos/:requestId
    */
   router.get("/:requestId/result", async (req, res) => {
     try {
