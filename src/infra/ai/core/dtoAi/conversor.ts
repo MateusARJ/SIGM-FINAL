@@ -18,6 +18,24 @@ export function converterSolicitacaoParaGerarMaterialDTO(
     console.error("❌ ERRO: anoLetivo é undefined. Objeto recebido:", solicitacao);
     throw new Error("anoLetivo é obrigatório");
   }
+
+  // ⚠️ nomeDisciplina e assuntoTitulo devem ter sido enriquecidos pelo IAClientService
+  // Se não foram encontrados, usa os IDs como fallback
+  const nomeDisciplina = (solicitacao as any).nomeDisciplina || solicitacao.disciplinaId;
+  const assuntoTitulo = (solicitacao as any).assuntoTitulo || solicitacao.assuntoId;
+
+  if (!nomeDisciplina || !assuntoTitulo) {
+    const campos = [];
+    if (!nomeDisciplina) campos.push("disciplina");
+    if (!assuntoTitulo) campos.push("assunto");
+    
+    console.error(`❌ ERRO: Não conseguiu encontrar ${campos.join(" e ")}`);
+    throw new Error(`Erro ao buscar dados de ${campos.join(" e ")}`);
+  }
+  if (!assuntoTitulo) {
+    console.error("❌ ERRO: assuntoTitulo não foi fornecido");
+    throw new Error("assuntoTitulo é obrigatório na requisição");
+  }
   
   // Determina o nível baseado no ano letivo
   // Fundamental: 1º ao 9º ano
@@ -37,10 +55,21 @@ export function converterSolicitacaoParaGerarMaterialDTO(
   
   const nivelEnsino: 'fundamental' | 'medio' = isMedia ? 'medio' : 'fundamental';
 
-  return {
-    disciplina: solicitacao.disciplinaId,
+  const dto: GerarMaterialDTO = {
+    // Usa o nome da disciplina (obrigatório)
+    disciplina: nomeDisciplina,
     ano: solicitacao.anoLetivo,
-    tema: solicitacao.assuntoId,
-    nivel: nivelEnsino
+    // Usa o título do assunto (obrigatório)
+    tema: assuntoTitulo,
+    nivel: nivelEnsino,
+    
+    // Passa as configurações opcionais
+    instrucoesExtras: (solicitacao as any).instrucoesExtras,
+    numeroSlides: (solicitacao as any).numeroSlides,
+    incluirImagens: (solicitacao as any).incluirImagens,
+    incluirAtividades: (solicitacao as any).incluirAtividades,
+    estilo: (solicitacao as any).estilo
   };
+
+  return dto;
 }

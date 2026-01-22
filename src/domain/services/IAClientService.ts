@@ -3,23 +3,27 @@ import { SolicitacaoConteudo } from "../models/RequisicaoModelo";
 import { GeminiService } from "../../infra/ai/infra/aiServices/geminiService";
 import { GerarConteudoUseCase } from "../../infra/ai/core/useCases/gerarConteudoUseCase";
 import { converterSolicitacaoParaGerarMaterialDTO } from "../../infra/ai/core/dtoAi/conversor";
+import { IRepository } from "../interfaces/IRepository";
 
 /**
  * IAClientService: Adaptador entre a camada de Services e a camada AI
  * 
  * Responsabilidades:
  * 1. Receber SolicitacaoConteudo (formato dos Services)
- * 2. Converter para GerarMaterialDTO (formato da IA)
- * 3. Chamar GeminiService para gerar conteúdo
- * 4. Retornar resultado ao ConteudoService
+ * 2. Enriquecer com nomes de disciplina/assunto da repository
+ * 3. Converter para GerarMaterialDTO (formato da IA)
+ * 4. Chamar GeminiService para gerar conteúdo
+ * 5. Retornar resultado ao ConteudoService
  */
 export class IAClientService implements IIAClient {
   private gerarConteudoUseCase: GerarConteudoUseCase;
+  private repository: IRepository;
 
-  constructor() {
+  constructor(repository: IRepository) {
     // Instancia os serviços da camada AI
     const geminiService = new GeminiService();
     this.gerarConteudoUseCase = new GerarConteudoUseCase(geminiService);
+    this.repository = repository;
   }
 
   async gerarConteudoAsync(
@@ -27,8 +31,31 @@ export class IAClientService implements IIAClient {
   ): Promise<{ tipo: string; conteudo: string }> {
     
     try {
+      // 0️⃣ ENRIQUECER: Buscar nomes de disciplina e assunto pelos IDs
+      const solicitacaoEnriquecida = { ...solicitacao };
+      
+      try {
+        const disciplina = await this.repository.getDisciplinaById(solicitacao.disciplinaId);
+        if (disciplina) {
+          (solicitacaoEnriquecida as any).nomeDisciplina = disciplina.nome;
+          console.log(`✅ Disciplina encontrada: ${disciplina.nome}`);
+        }
+      } catch (e) {
+        console.warn(`⚠️ Não conseguiu buscar disciplina com ID: ${solicitacao.disciplinaId}`);
+      }
+
+      try {
+        const assunto = await this.repository.getAssuntoById(solicitacao.assuntoId);
+        if (assunto) {
+          (solicitacaoEnriquecida as any).assuntoTitulo = assunto.nome;
+          console.log(`✅ Assunto encontrado: ${assunto.nome}`);
+        }
+      } catch (e) {
+        console.warn(`⚠️ Não conseguiu buscar assunto com ID: ${solicitacao.assuntoId}`);
+      }
+
       // 1️⃣ CONVERTE: SolicitacaoConteudo → GerarMaterialDTO
-      const materialDTO = converterSolicitacaoParaGerarMaterialDTO(solicitacao);
+      const materialDTO = converterSolicitacaoParaGerarMaterialDTO(solicitacaoEnriquecida as any);
 
       // 2️⃣ CHAMA A IA baseado no tipo de conteúdo
       let resposta;

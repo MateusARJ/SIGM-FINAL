@@ -9,4 +9,11 @@ export interface GerarMaterialDTO {
   ano: string          // Ex: "9º ano"
   tema: string         // Ex: "Cultura Digital"
   nivel: NivelEnsino   // Fundamental ou Médio
+  
+  // Configurações específicas por tipo de conteúdo
+  instrucoesExtras?: string        // Instruções customizadas do usuário
+  numeroSlides?: number            // Para aulas
+  incluirImagens?: boolean         // Para aulas
+  incluirAtividades?: boolean      // Para aulas
+  estilo?: string                  // Ex: "minimalista", "criativo", "tradicional"
 }

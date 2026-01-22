@@ -13,6 +13,10 @@ Contexto da aula:
 - Tema da aula: {{tema}}
 - Nível de ensino: {{nivel}}
 
+Configurações específicas:
+{{configAula}}
+{{instrucoesExtras}}
+
 Crie um PLANO DE AULA completo contendo obrigatoriamente:
 1. Objetivo geral da aula
 2. Objetivos específicos
@@ -23,4 +27,5 @@ Crie um PLANO DE AULA completo contendo obrigatoriamente:
 7. Duração estimada da aula
 
 Utilize linguagem clara, adequada ao nível informado e alinhada à BNCC.
+Respeite as configurações e instruções específicas fornecidas acima.
 `

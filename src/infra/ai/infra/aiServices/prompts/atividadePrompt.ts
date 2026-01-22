@@ -13,6 +13,10 @@ Contexto da atividade:
 - Tema: {{tema}}
 - Nível de ensino: {{nivel}}
 
+Configurações específicas:
+{{configAtividade}}
+{{instrucoesExtras}}
+
 Crie uma ATIVIDADE EDUCACIONAL completa contendo obrigatoriamente:
 1. Objetivo da atividade
 2. Descrição da atividade
@@ -22,4 +26,5 @@ Crie uma ATIVIDADE EDUCACIONAL completa contendo obrigatoriamente:
 6. Tempo estimado
 
 Utilize linguagem clara, adequada ao nível informado e alinhada à BNCC.
+Respeite as configurações e instruções específicas fornecidas acima.
 `

@@ -74,15 +74,27 @@ export class GeminiService implements IAService {
     // 2️⃣ BNCC por nível de ensino
     const bnccRegras = bncc.regras_por_nivel[dados.nivel].join('\n')
 
-    // 3️⃣ Montagem do prompt final
+    // 3️⃣ Configurações específicas da aula
+    const configAula = [
+      dados.numeroSlides ? `- Número de slides: ${dados.numeroSlides}` : '',
+      `- Incluir imagens: ${dados.incluirImagens !== false ? 'Sim' : 'Não'}`,
+      `- Incluir atividades interativas: ${dados.incluirAtividades !== false ? 'Sim' : 'Não'}`,
+      dados.estilo ? `- Estilo de aula: ${dados.estilo}` : ''
+    ].filter(Boolean).join('\n')
+
+    const instrucoesExtras = dados.instrucoesExtras ? `\nInstruções específicas do professor:\n${dados.instrucoesExtras}` : ''
+
+    // 4️⃣ Montagem do prompt final
     const promptFinal = planoAulaPrompt
       .split('{{nivel}}').join(dados.nivel)
       .split('{{disciplina}}').join(dados.disciplina)
       .split('{{ano}}').join(dados.ano)
       .split('{{tema}}').join(dados.tema)
       .split('{{bnccRegras}}').join(bnccRegras)
+      .split('{{configAula}}').join(configAula)
+      .split('{{instrucoesExtras}}').join(instrucoesExtras)
 
-    // 4️⃣ Chamar API Gemini
+    // 5️⃣ Chamar API Gemini
     const resposta = await this.chamarGemini(promptFinal)
     return resposta
   }
@@ -94,15 +106,25 @@ export class GeminiService implements IAService {
     // 2️⃣ BNCC por nível de ensino
     const bnccRegras = bncc.regras_por_nivel[dados.nivel].join('\n')
 
-    // 3️⃣ Montagem do prompt final
+    // 3️⃣ Configurações específicas da atividade
+    const configAtividade = [
+      dados.estilo ? `- Estilo: ${dados.estilo}` : '',
+      dados.instrucoesExtras ? `- Observações: ${dados.instrucoesExtras}` : ''
+    ].filter(Boolean).join('\n')
+
+    const instrucoesExtras = dados.instrucoesExtras ? `\nInstruções específicas do professor:\n${dados.instrucoesExtras}` : ''
+
+    // 4️⃣ Montagem do prompt final
     const promptFinal = atividadePrompt
       .split('{{nivel}}').join(dados.nivel)
       .split('{{disciplina}}').join(dados.disciplina)
       .split('{{ano}}').join(dados.ano)
       .split('{{tema}}').join(dados.tema)
       .split('{{bnccRegras}}').join(bnccRegras)
+      .split('{{configAtividade}}').join(configAtividade)
+      .split('{{instrucoesExtras}}').join(instrucoesExtras)
 
-    // 4️⃣ Chamar API Gemini
+    // 5️⃣ Chamar API Gemini
     const resposta = await this.chamarGemini(promptFinal)
     return resposta
   }
@@ -114,15 +136,25 @@ export class GeminiService implements IAService {
     // 2️⃣ BNCC por nível de ensino
     const bnccRegras = bncc.regras_por_nivel[dados.nivel].join('\n')
 
-    // 3️⃣ Montagem do prompt final
+    // 3️⃣ Configurações específicas da prova
+    const configProva = [
+      dados.estilo ? `- Estilo de prova: ${dados.estilo}` : '',
+      dados.instrucoesExtras ? `- Observações: ${dados.instrucoesExtras}` : ''
+    ].filter(Boolean).join('\n')
+
+    const instrucoesExtras = dados.instrucoesExtras ? `\nInstruções específicas do professor:\n${dados.instrucoesExtras}` : ''
+
+    // 4️⃣ Montagem do prompt final
     const promptFinal = provaPrompt
       .split('{{nivel}}').join(dados.nivel)
       .split('{{disciplina}}').join(dados.disciplina)
       .split('{{ano}}').join(dados.ano)
       .split('{{tema}}').join(dados.tema)
       .split('{{bnccRegras}}').join(bnccRegras)
+      .split('{{configProva}}').join(configProva)
+      .split('{{instrucoesExtras}}').join(instrucoesExtras)
 
-    // 4️⃣ Chamar API Gemini
+    // 5️⃣ Chamar API Gemini
     const resposta = await this.chamarGemini(promptFinal)
     return resposta
   }

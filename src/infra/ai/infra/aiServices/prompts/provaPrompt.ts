@@ -13,6 +13,10 @@ Contexto da prova:
 - Tema: {{tema}}
 - Nível de ensino: {{nivel}}
 
+Configurações específicas:
+{{configProva}}
+{{instrucoesExtras}}
+
 Crie uma PROVA/AVALIAÇÃO completa contendo obrigatoriamente:
 1. Instruções gerais
 2. 5 questões de múltipla escolha
@@ -22,4 +26,5 @@ Crie uma PROVA/AVALIAÇÃO completa contendo obrigatoriamente:
 6. Pontuação total
 
 Utilize linguagem clara, adequada ao nível informado e alinhada à BNCC.
+Respeite as configurações e instruções específicas fornecidas acima.
 `
