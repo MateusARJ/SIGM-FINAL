@@ -1,3 +1,9 @@
+Como ver o o banco de dados?
+
+rode no terminal:
+
+"npx prisma studio"
+
 Detalhes Importantes dessa Implementação:
 
     Mapeamento de Tipos (serieId vs anoLetivoId):
