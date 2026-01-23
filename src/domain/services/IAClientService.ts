@@ -6,6 +6,14 @@ import { converterSolicitacaoParaGerarMaterialDTO } from "../../infra/ai/core/dt
 import { IRepository } from "../interfaces/IRepository";
 
 /**
+ * Type para a solicitação enriquecida com nomes de disciplina e assunto
+ */
+type SolicitacaoEnriquecida = SolicitacaoConteudo & {
+  nomeDisciplina?: string;
+  assuntoTitulo?: string;
+};
+
+/**
  * IAClientService: Adaptador entre a camada de Services e a camada AI
  * 
  * Responsabilidades:
@@ -32,12 +40,12 @@ export class IAClientService implements IIAClient {
     
     try {
       // 0️⃣ ENRIQUECER: Buscar nomes de disciplina e assunto pelos IDs
-      const solicitacaoEnriquecida = { ...solicitacao };
+      const solicitacaoEnriquecida: SolicitacaoEnriquecida = { ...solicitacao };
       
       try {
         const disciplina = await this.repository.getDisciplinaById(solicitacao.disciplinaId);
         if (disciplina) {
-          (solicitacaoEnriquecida as any).nomeDisciplina = disciplina.nome;
+          solicitacaoEnriquecida.nomeDisciplina = disciplina.nome;
           console.log(`✅ Disciplina encontrada: ${disciplina.nome}`);
         }
       } catch (e) {
@@ -47,7 +55,7 @@ export class IAClientService implements IIAClient {
       try {
         const assunto = await this.repository.getAssuntoById(solicitacao.assuntoId);
         if (assunto) {
-          (solicitacaoEnriquecida as any).assuntoTitulo = assunto.nome;
+          solicitacaoEnriquecida.assuntoTitulo = assunto.nome;
           console.log(`✅ Assunto encontrado: ${assunto.nome}`);
         }
       } catch (e) {
@@ -55,7 +63,7 @@ export class IAClientService implements IIAClient {
       }
 
       // 1️⃣ CONVERTE: SolicitacaoConteudo → GerarMaterialDTO
-      const materialDTO = converterSolicitacaoParaGerarMaterialDTO(solicitacaoEnriquecida as any);
+      const materialDTO = converterSolicitacaoParaGerarMaterialDTO(solicitacaoEnriquecida as SolicitacaoConteudo);
 
       // 2️⃣ CHAMA A IA baseado no tipo de conteúdo
       let resposta;

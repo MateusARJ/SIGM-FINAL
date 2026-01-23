@@ -1,5 +1,7 @@
 // src/infra/ai/GeminiService.ts
 import 'dotenv/config';
+import { IBnccRetriever } from "../retriveal/interfaces/IBnccRetriever";
+import { BnccRetriever } from "../retriveal/bnccRetriever";
 import { IAService } from '../../core/dtoAi/iAiService'
 import { GerarMaterialDTO } from '../../core/dtoAi/entradaDto'
 import bncc from '../../data/bncc/bncc.json'
@@ -15,6 +17,9 @@ export class GeminiService implements IAService {
   private readonly client: GoogleGenerativeAI
   private readonly modelo = 'gemini-2.5-flash'
 
+  // 🆕 RAG - dependência do retriever
+  private readonly bnccRetriever: IBnccRetriever
+
   constructor() {
     const apiKey = process.env.SGI_GEMINI_API_KEY
 
@@ -29,6 +34,9 @@ export class GeminiService implements IAService {
     console.log('✅ API Key carregada com sucesso')
     this.apiKey = apiKey
     this.client = new GoogleGenerativeAI(apiKey)
+
+    // 🆕 RAG - instancia o mock retriever
+    this.bnccRetriever = new BnccRetriever()
   }
 
   // 🔒 Validação mínima do contrato
@@ -61,8 +69,6 @@ export class GeminiService implements IAService {
       return texto
     } catch (error) {
       console.error('❌ Erro ao chamar API Gemini:', error)
-      console.error('Chave API presente:', !!this.apiKey)
-      console.error('Chave API válida:', this.apiKey?.length || 0, 'caracteres')
       throw error
     }
   }
@@ -71,7 +77,10 @@ export class GeminiService implements IAService {
     // 1️⃣ Garantia de dados válidos
     this.validarDTO(dados)
 
-    // 2️⃣ BNCC por nível de ensino
+    // 🆕 RAG - recupera contexto externo
+    const contextoRag = await this.bnccRetriever.recuperarContexto(dados)
+
+    // 2️⃣ BNCC por nível de ensino (regra local continua)
     const bnccRegras = bncc.regras_por_nivel[dados.nivel].join('\n')
 
     // 3️⃣ Configurações específicas da aula
@@ -82,10 +91,16 @@ export class GeminiService implements IAService {
       dados.estilo ? `- Estilo de aula: ${dados.estilo}` : ''
     ].filter(Boolean).join('\n')
 
-    const instrucoesExtras = dados.instrucoesExtras ? `\nInstruções específicas do professor:\n${dados.instrucoesExtras}` : ''
+    const instrucoesExtras = dados.instrucoesExtras
+      ? `\nInstruções específicas do professor:\n${dados.instrucoesExtras}`
+      : ''
 
-    // 4️⃣ Montagem do prompt final
-    const promptFinal = planoAulaPrompt
+    // 4️⃣ Montagem do prompt final (RAG ANTES do prompt base)
+    const promptFinal = `
+${contextoRag}
+
+${planoAulaPrompt}
+`
       .split('{{nivel}}').join(dados.nivel)
       .split('{{disciplina}}').join(dados.disciplina)
       .split('{{ano}}').join(dados.ano)
@@ -95,27 +110,31 @@ export class GeminiService implements IAService {
       .split('{{instrucoesExtras}}').join(instrucoesExtras)
 
     // 5️⃣ Chamar API Gemini
-    const resposta = await this.chamarGemini(promptFinal)
-    return resposta
+    return this.chamarGemini(promptFinal)
   }
 
   async gerarAtividade(dados: GerarMaterialDTO): Promise<string> {
-    // 1️⃣ Garantia de dados válidos
     this.validarDTO(dados)
 
-    // 2️⃣ BNCC por nível de ensino
+    // 🆕 RAG
+    const contextoRag = await this.bnccRetriever.recuperarContexto(dados)
+
     const bnccRegras = bncc.regras_por_nivel[dados.nivel].join('\n')
 
-    // 3️⃣ Configurações específicas da atividade
     const configAtividade = [
       dados.estilo ? `- Estilo: ${dados.estilo}` : '',
       dados.instrucoesExtras ? `- Observações: ${dados.instrucoesExtras}` : ''
     ].filter(Boolean).join('\n')
 
-    const instrucoesExtras = dados.instrucoesExtras ? `\nInstruções específicas do professor:\n${dados.instrucoesExtras}` : ''
+    const instrucoesExtras = dados.instrucoesExtras
+      ? `\nInstruções específicas do professor:\n${dados.instrucoesExtras}`
+      : ''
 
-    // 4️⃣ Montagem do prompt final
-    const promptFinal = atividadePrompt
+    const promptFinal = `
+${contextoRag}
+
+${atividadePrompt}
+`
       .split('{{nivel}}').join(dados.nivel)
       .split('{{disciplina}}').join(dados.disciplina)
       .split('{{ano}}').join(dados.ano)
@@ -124,28 +143,31 @@ export class GeminiService implements IAService {
       .split('{{configAtividade}}').join(configAtividade)
       .split('{{instrucoesExtras}}').join(instrucoesExtras)
 
-    // 5️⃣ Chamar API Gemini
-    const resposta = await this.chamarGemini(promptFinal)
-    return resposta
+    return this.chamarGemini(promptFinal)
   }
 
   async gerarProva(dados: GerarMaterialDTO): Promise<string> {
-    // 1️⃣ Garantia de dados válidos
     this.validarDTO(dados)
 
-    // 2️⃣ BNCC por nível de ensino
+    // 🆕 RAG
+    const contextoRag = await this.bnccRetriever.recuperarContexto(dados)
+
     const bnccRegras = bncc.regras_por_nivel[dados.nivel].join('\n')
 
-    // 3️⃣ Configurações específicas da prova
     const configProva = [
       dados.estilo ? `- Estilo de prova: ${dados.estilo}` : '',
       dados.instrucoesExtras ? `- Observações: ${dados.instrucoesExtras}` : ''
     ].filter(Boolean).join('\n')
 
-    const instrucoesExtras = dados.instrucoesExtras ? `\nInstruções específicas do professor:\n${dados.instrucoesExtras}` : ''
+    const instrucoesExtras = dados.instrucoesExtras
+      ? `\nInstruções específicas do professor:\n${dados.instrucoesExtras}`
+      : ''
 
-    // 4️⃣ Montagem do prompt final
-    const promptFinal = provaPrompt
+    const promptFinal = `
+${contextoRag}
+
+${provaPrompt}
+`
       .split('{{nivel}}').join(dados.nivel)
       .split('{{disciplina}}').join(dados.disciplina)
       .split('{{ano}}').join(dados.ano)
@@ -154,8 +176,6 @@ export class GeminiService implements IAService {
       .split('{{configProva}}').join(configProva)
       .split('{{instrucoesExtras}}').join(instrucoesExtras)
 
-    // 5️⃣ Chamar API Gemini
-    const resposta = await this.chamarGemini(promptFinal)
-    return resposta
+    return this.chamarGemini(promptFinal)
   }
 }
