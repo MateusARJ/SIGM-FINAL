@@ -1,7 +1,7 @@
 {
   "_type": "export",
   "__export_format": 4,
-  "__export_date": "2026-01-15T14:00:00.000Z",
+  "__export_date": "2026-01-22T00:46:05Z",
   "__export_source": "insomnia.desktop.app:v2023.5.8",
   "resources": [
     {
@@ -20,10 +20,22 @@
         "base_url": "http://localhost:3000",
         "assunto_id": "",
         "disciplina_id": "",
-        "request_id": ""
+        "request_id": "",
+        "serie_id": "",
+        "ano_letivo": "8º Ano",
+        "assunto_titulo": "Equações do 1º Grau",
+        "disciplina_id_1": "",
+        "disciplina_id_2": "",
+        "assunto_id_1": "",
+        "assunto_id_2": "",
+        "request_id_1": "",
+        "request_id_2": "",
+        "ano_letivo_1": "8º Ano",
+        "ano_letivo_2": "8º Ano",
+        "assunto_titulo_1": "Equações do 1º Grau",
+        "assunto_titulo_2": "Interpretação de Texto"
       }
     },
-
     {
       "_id": "req_create_disciplina",
       "_type": "request",
@@ -33,8 +45,14 @@
       "url": "{{ base_url }}/disciplinas",
       "body": {
         "mimeType": "application/json",
-        "text": "{\n  \"nome\": \"Matemática\"\n}"
-      }
+        "text": "{\n  \"nome\": \"Matemática\",\n  \"serieId\": \"{{ serie_id }}\"\n}"
+      },
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ]
     },
     {
       "_id": "req_list_disciplina",
@@ -44,8 +62,6 @@
       "method": "GET",
       "url": "{{ base_url }}/disciplinas"
     },
-
-
     {
       "_id": "req_create_assunto",
       "_type": "request",
@@ -56,7 +72,13 @@
       "body": {
         "mimeType": "application/json",
         "text": "{\n  \"nome\": \"Equações do 1º Grau\",\n  \"disciplinaID\": \"{{ disciplina_id }}\"\n}"
-      }
+      },
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ]
     },
     {
       "_id": "req_list_assunto",
@@ -66,8 +88,6 @@
       "method": "GET",
       "url": "{{ base_url }}/assuntos"
     },
-
-
     {
       "_id": "req_create_conteudo",
       "_type": "request",
@@ -77,8 +97,14 @@
       "url": "{{ base_url }}/conteudos",
       "body": {
         "mimeType": "application/json",
-        "text": "{\n  \"assuntoId\": \"{{ assunto_id }}\",\n  \"nivel\": \"iniciante\",\n  \"formato\": \"texto\"\n}"
-      }
+        "text": "{\n  \"serieId\": \"{{ serie_id }}\",\n  \"disciplinaId\": \"{{ disciplina_id }}\",\n  \"assuntoId\": \"{{ assunto_id }}\",\n  \"anoLetivo\": \"{{ ano_letivo }}\",\n  \"assuntoTitulo\": \"{{ assunto_titulo }}\",\n  \"instrucoesExtras\": \"Explique de forma simples e com exemplos do cotidiano.\",\n  \"tipoConteudo\": \"aula\",\n  \"numeroSlides\": 8,\n  \"incluirImagens\": false,\n  \"incluirAtividades\": true,\n  \"estilo\": \"minimalista\"\n}"
+      },
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ]
     },
     {
       "_id": "req_status_conteudo",
@@ -102,7 +128,173 @@
       "parentId": "wrk_clean_arch_api",
       "name": "Buscar Assuntos por Disciplina",
       "method": "GET",
-      "url": "{{ base_url }}/assuntos/search/disciplina/disciplina_id"
+      "url": "{{ base_url }}/assuntos/search/disciplina/{{ disciplina_id }}"
+    },
+    {
+      "_id": "req_create_ano_letivo",
+      "_type": "request",
+      "name": "Criar Ano Letivo",
+      "method": "POST",
+      "url": "{{ base_url }}/anosLetivos",
+      "parentId": "wrk_clean_arch_api",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"nome\": \"{{ ano_letivo }}\",\n  \"disciplinas\": []\n}"
+      },
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ]
+    },
+    {
+      "_id": "req_list_anos_letivos",
+      "_type": "request",
+      "name": "Listar Anos Letivos",
+      "method": "GET",
+      "url": "{{ base_url }}/anosLetivos",
+      "parentId": "wrk_clean_arch_api"
+    },
+    {
+      "_id": "req_create_disciplina_ex1",
+      "_type": "request",
+      "parentId": "wrk_clean_arch_api",
+      "name": "Criar Disciplina (Exemplo 1 - Matemática)",
+      "method": "POST",
+      "url": "{{ base_url }}/disciplinas",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"nome\": \"Matemática\",\n  \"serieId\": \"{{ serie_id }}\"\n}"
+      },
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ]
+    },
+    {
+      "_id": "req_create_disciplina_ex2",
+      "_type": "request",
+      "parentId": "wrk_clean_arch_api",
+      "name": "Criar Disciplina (Exemplo 2 - Língua Portuguesa)",
+      "method": "POST",
+      "url": "{{ base_url }}/disciplinas",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"nome\": \"Língua Portuguesa\",\n  \"serieId\": \"{{ serie_id }}\"\n}"
+      },
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ]
+    },
+    {
+      "_id": "req_create_assunto_ex1",
+      "_type": "request",
+      "parentId": "wrk_clean_arch_api",
+      "name": "Criar Assunto (Exemplo 1 - Matemática)",
+      "method": "POST",
+      "url": "{{ base_url }}/assuntos",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"nome\": \"Equações do 1º Grau\",\n  \"disciplinaID\": \"{{ disciplina_id_1 }}\"\n}"
+      },
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ]
+    },
+    {
+      "_id": "req_create_assunto_ex2",
+      "_type": "request",
+      "parentId": "wrk_clean_arch_api",
+      "name": "Criar Assunto (Exemplo 2 - Português)",
+      "method": "POST",
+      "url": "{{ base_url }}/assuntos",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"nome\": \"Interpretação de Texto\",\n  \"disciplinaID\": \"{{ disciplina_id_2 }}\"\n}"
+      },
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ]
+    },
+    {
+      "_id": "req_create_conteudo_flow1",
+      "_type": "request",
+      "parentId": "wrk_clean_arch_api",
+      "name": "1) Gerar Conteúdo (Aula) - Exemplo 1 (Matemática/Equações)",
+      "method": "POST",
+      "url": "{{ base_url }}/conteudos",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"serieId\": \"{{ serie_id }}\",\n  \"disciplinaId\": \"{{ disciplina_id_1 }}\",\n  \"assuntoId\": \"{{ assunto_id_1 }}\",\n  \"anoLetivo\": \"{{ ano_letivo_1 }}\",\n  \"assuntoTitulo\": \"{{ assunto_titulo_1 }}\",\n  \"tipoConteudo\": \"aula\",\n  \"instrucoesExtras\": \"Inclua exemplos contextualizados e uma atividade no final.\",\n  \"numeroSlides\": 10,\n  \"incluirImagens\": true,\n  \"incluirAtividades\": true,\n  \"estilo\": \"criativo\"\n}"
+      },
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ]
+    },
+    {
+      "_id": "req_status_conteudo_flow1",
+      "_type": "request",
+      "parentId": "wrk_clean_arch_api",
+      "name": "2) Ver Status - Exemplo 1",
+      "method": "GET",
+      "url": "{{ base_url }}/conteudos/{{ request_id_1 }}/status"
+    },
+    {
+      "_id": "req_get_conteudo_flow1",
+      "_type": "request",
+      "parentId": "wrk_clean_arch_api",
+      "name": "3) Obter Conteúdo - Exemplo 1",
+      "method": "GET",
+      "url": "{{ base_url }}/conteudos/{{ request_id_1 }}"
+    },
+    {
+      "_id": "req_create_conteudo_flow2",
+      "_type": "request",
+      "parentId": "wrk_clean_arch_api",
+      "name": "1) Gerar Conteúdo (Prova) - Exemplo 2 (Português/Interpretação)",
+      "method": "POST",
+      "url": "{{ base_url }}/conteudos",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"serieId\": \"{{ serie_id }}\",\n  \"disciplinaId\": \"{{ disciplina_id_2 }}\",\n  \"assuntoId\": \"{{ assunto_id_2 }}\",\n  \"anoLetivo\": \"{{ ano_letivo_2 }}\",\n  \"assuntoTitulo\": \"{{ assunto_titulo_2 }}\",\n  \"tipoConteudo\": \"prova\",\n  \"numeroQuestoes\": 8,\n  \"tiposQuestao\": [\"objetiva\", \"dissertativa\"],\n  \"nivelDificuldade\": \"médio\",\n  \"incluirGabarito\": true\n}"
+      },
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ]
+    },
+    {
+      "_id": "req_status_conteudo_flow2",
+      "_type": "request",
+      "parentId": "wrk_clean_arch_api",
+      "name": "2) Ver Status - Exemplo 2",
+      "method": "GET",
+      "url": "{{ base_url }}/conteudos/{{ request_id_2 }}/status"
+    },
+    {
+      "_id": "req_get_conteudo_flow2",
+      "_type": "request",
+      "parentId": "wrk_clean_arch_api",
+      "name": "3) Obter Conteúdo - Exemplo 2",
+      "method": "GET",
+      "url": "{{ base_url }}/conteudos/{{ request_id_2 }}"
     }
   ]
 }
