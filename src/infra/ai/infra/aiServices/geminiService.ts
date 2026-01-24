@@ -12,92 +12,69 @@ import { GoogleGenerativeAI } from '@google/generative-ai'
 
 export class GeminiService implements IAService {
 
-  // 🔐 Chave da API e cliente Gemini
   private readonly apiKey: string
   private readonly client: GoogleGenerativeAI
   private readonly modelo = 'gemini-2.5-flash'
-
   // 🆕 RAG - dependência do retriever
   private readonly bnccRetriever: IBnccRetriever
 
   constructor() {
     const apiKey = process.env.SGI_GEMINI_API_KEY
 
-    if (!apiKey) {
-      throw new Error('SGI_GEMINI_API_KEY não definida no ambiente')
-    }
-
-    if (apiKey.trim().length === 0) {
-      throw new Error('SGI_GEMINI_API_KEY está vazia')
+    if (!apiKey || apiKey.trim().length === 0) {
+      throw new Error('SGI_GEMINI_API_KEY inválida')
     }
 
     console.log('✅ API Key carregada com sucesso')
     this.apiKey = apiKey
     this.client = new GoogleGenerativeAI(apiKey)
 
-    // 🆕 RAG - instancia o mock retriever
+    // Instancia o Retriever Real (que conecta no Docker)
     this.bnccRetriever = new BnccRetriever()
   }
 
-  // 🔒 Validação mínima do contrato
   private validarDTO(dados: GerarMaterialDTO): void {
     if (!dados.disciplina || !dados.ano || !dados.tema || !dados.nivel) {
       throw new Error('Dados incompletos para geração de material')
     }
   }
 
-  // 🤖 Método privado para chamar a API Gemini usando SDK
   private async chamarGemini(prompt: string): Promise<string> {
     try {
-      console.log('🔑 Chave carregada:', this.apiKey.substring(0, 10) + '...')
-      console.log('📦 Modelo:', this.modelo)
-      
-      const model = this.client.getGenerativeModel({
-        model: this.modelo
-      })
-
-      console.log('🚀 Chamando API Gemini com SDK...')
+      const model = this.client.getGenerativeModel({ model: this.modelo })
       const result = await model.generateContent(prompt)
-      
-      console.log('✅ Resposta recebida da API')
       const texto = result.response.text()
       
-      if (!texto) {
-        throw new Error('Nenhum conteúdo foi gerado pela IA')
-      }
-
+      if (!texto) throw new Error('Conteúdo vazio gerado pela IA')
       return texto
     } catch (error) {
-      console.error('❌ Erro ao chamar API Gemini:', error)
+      console.error('❌ Erro no Gemini:', error)
       throw error
     }
   }
 
   async gerarPlanoAula(dados: GerarMaterialDTO): Promise<string> {
-    // 1️⃣ Garantia de dados válidos
     this.validarDTO(dados)
 
-    // 🆕 RAG - recupera contexto externo
+    // 1️⃣ RAG: Busca no Docker
     const contextoRag = await this.bnccRetriever.recuperarContexto(dados)
 
-    // 2️⃣ BNCC por nível de ensino (regra local continua)
-    const bnccRegras = bncc.regras_por_nivel[dados.nivel].join('\n')
+    // 2️⃣ Regras estáticas
+    const bnccRegras = bncc.regras_por_nivel[dados.nivel]?.join('\n') || ''
 
-    // 3️⃣ Configurações específicas da aula
     const configAula = [
-      dados.numeroSlides ? `- Número de slides: ${dados.numeroSlides}` : '',
-      `- Incluir imagens: ${dados.incluirImagens !== false ? 'Sim' : 'Não'}`,
-      `- Incluir atividades interativas: ${dados.incluirAtividades !== false ? 'Sim' : 'Não'}`,
-      dados.estilo ? `- Estilo de aula: ${dados.estilo}` : ''
+      dados.numeroSlides ? `- Slides: ${dados.numeroSlides}` : '',
+      `- Imagens: ${dados.incluirImagens ? 'Sim' : 'Não'}`,
+      `- Interatividade: ${dados.incluirAtividades ? 'Sim' : 'Não'}`,
+      dados.estilo ? `- Estilo: ${dados.estilo}` : ''
     ].filter(Boolean).join('\n')
 
-    const instrucoesExtras = dados.instrucoesExtras
-      ? `\nInstruções específicas do professor:\n${dados.instrucoesExtras}`
-      : ''
-
-    // 4️⃣ Montagem do prompt final (RAG ANTES do prompt base)
+    // 3️⃣ Prompt Enriquecido
+    // Injetamos o contextoRag no topo para dar autoridade
     const promptFinal = `
 ${contextoRag}
+
+IMPORTANTE: Você deve priorizar as diretrizes do CONTEXTO OFICIAL acima ao elaborar o plano.
 
 ${planoAulaPrompt}
 `
@@ -107,31 +84,24 @@ ${planoAulaPrompt}
       .split('{{tema}}').join(dados.tema)
       .split('{{bnccRegras}}').join(bnccRegras)
       .split('{{configAula}}').join(configAula)
-      .split('{{instrucoesExtras}}').join(instrucoesExtras)
+      .split('{{instrucoesExtras}}').join(dados.instrucoesExtras || '')
 
-    // 5️⃣ Chamar API Gemini
     return this.chamarGemini(promptFinal)
   }
 
   async gerarAtividade(dados: GerarMaterialDTO): Promise<string> {
     this.validarDTO(dados)
-
-    // 🆕 RAG
     const contextoRag = await this.bnccRetriever.recuperarContexto(dados)
-
-    const bnccRegras = bncc.regras_por_nivel[dados.nivel].join('\n')
+    const bnccRegras = bncc.regras_por_nivel[dados.nivel]?.join('\n') || ''
 
     const configAtividade = [
       dados.estilo ? `- Estilo: ${dados.estilo}` : '',
-      dados.instrucoesExtras ? `- Observações: ${dados.instrucoesExtras}` : ''
-    ].filter(Boolean).join('\n')
-
-    const instrucoesExtras = dados.instrucoesExtras
-      ? `\nInstruções específicas do professor:\n${dados.instrucoesExtras}`
-      : ''
+      dados.instrucoesExtras ? `- Obs: ${dados.instrucoesExtras}` : ''
+    ].join('\n')
 
     const promptFinal = `
 ${contextoRag}
+Baseie as questões nas competências citadas no CONTEXTO OFICIAL acima.
 
 ${atividadePrompt}
 `
@@ -141,30 +111,24 @@ ${atividadePrompt}
       .split('{{tema}}').join(dados.tema)
       .split('{{bnccRegras}}').join(bnccRegras)
       .split('{{configAtividade}}').join(configAtividade)
-      .split('{{instrucoesExtras}}').join(instrucoesExtras)
+      .split('{{instrucoesExtras}}').join(dados.instrucoesExtras || '')
 
     return this.chamarGemini(promptFinal)
   }
 
   async gerarProva(dados: GerarMaterialDTO): Promise<string> {
     this.validarDTO(dados)
-
-    // 🆕 RAG
     const contextoRag = await this.bnccRetriever.recuperarContexto(dados)
-
-    const bnccRegras = bncc.regras_por_nivel[dados.nivel].join('\n')
+    const bnccRegras = bncc.regras_por_nivel[dados.nivel]?.join('\n') || ''
 
     const configProva = [
-      dados.estilo ? `- Estilo de prova: ${dados.estilo}` : '',
-      dados.instrucoesExtras ? `- Observações: ${dados.instrucoesExtras}` : ''
-    ].filter(Boolean).join('\n')
-
-    const instrucoesExtras = dados.instrucoesExtras
-      ? `\nInstruções específicas do professor:\n${dados.instrucoesExtras}`
-      : ''
+      dados.estilo ? `- Estilo: ${dados.estilo}` : '',
+      dados.instrucoesExtras ? `- Obs: ${dados.instrucoesExtras}` : ''
+    ].join('\n')
 
     const promptFinal = `
 ${contextoRag}
+Garanta que as questões avaliem as habilidades mencionadas no CONTEXTO OFICIAL.
 
 ${provaPrompt}
 `
@@ -174,7 +138,7 @@ ${provaPrompt}
       .split('{{tema}}').join(dados.tema)
       .split('{{bnccRegras}}').join(bnccRegras)
       .split('{{configProva}}').join(configProva)
-      .split('{{instrucoesExtras}}').join(instrucoesExtras)
+      .split('{{instrucoesExtras}}').join(dados.instrucoesExtras || '')
 
     return this.chamarGemini(promptFinal)
   }
