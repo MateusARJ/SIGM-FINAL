@@ -1,10 +1,8 @@
 // src/infra/ai/GeminiService.ts
-import 'dotenv/config';
-import { IBnccRetriever } from "../retriveal/interfaces/IBnccRetriever";
-import { BnccRetriever } from "../retriveal/bnccRetriever";
+import 'dotenv/config'
+import { IBnccRetriever } from "../retrieval/core/interfaces/IBnccRetriever"
 import { IAService } from '../../core/dtoAi/iAiService'
 import { GerarMaterialDTO } from '../../core/dtoAi/entradaDto'
-import bncc from '../../data/bncc/bncc.json'
 import { planoAulaPrompt } from './prompts/planoAulaPrompt'
 import { atividadePrompt } from './prompts/atividadePrompt'
 import { provaPrompt } from './prompts/provaPrompt'
@@ -17,10 +15,10 @@ export class GeminiService implements IAService {
   private readonly client: GoogleGenerativeAI
   private readonly modelo = 'gemini-2.5-flash'
 
-  // 🆕 RAG - dependência do retriever
+  // 🆕 RAG - dependência injetada no boot
   private readonly bnccRetriever: IBnccRetriever
 
-  constructor() {
+  constructor(bnccRetriever: IBnccRetriever) {
     const apiKey = process.env.SGI_GEMINI_API_KEY
 
     if (!apiKey) {
@@ -35,8 +33,8 @@ export class GeminiService implements IAService {
     this.apiKey = apiKey
     this.client = new GoogleGenerativeAI(apiKey)
 
-    // 🆕 RAG - instancia o mock retriever
-    this.bnccRetriever = new BnccRetriever()
+    // 🆕 RAG - recebe o retriever já inicializado
+    this.bnccRetriever = bnccRetriever
   }
 
   // 🔒 Validação mínima do contrato
@@ -77,13 +75,10 @@ export class GeminiService implements IAService {
     // 1️⃣ Garantia de dados válidos
     this.validarDTO(dados)
 
-    // 🆕 RAG - recupera contexto externo
+    // 🆕 RAG - recupera contexto real dos PDFs (BNCC + MEC)
     const contextoRag = await this.bnccRetriever.recuperarContexto(dados)
 
-    // 2️⃣ BNCC por nível de ensino (regra local continua)
-    const bnccRegras = bncc.regras_por_nivel[dados.nivel].join('\n')
-
-    // 3️⃣ Configurações específicas da aula
+    // 2️⃣ Configurações específicas da aula
     const configAula = [
       dados.numeroSlides ? `- Número de slides: ${dados.numeroSlides}` : '',
       `- Incluir imagens: ${dados.incluirImagens !== false ? 'Sim' : 'Não'}`,
@@ -95,31 +90,28 @@ export class GeminiService implements IAService {
       ? `\nInstruções específicas do professor:\n${dados.instrucoesExtras}`
       : ''
 
-    // 4️⃣ Montagem do prompt final (RAG ANTES do prompt base)
+    // 3️⃣ Montagem do prompt final (RAG antes do prompt base)
     const promptFinal = `
-${contextoRag}
+  ${contextoRag}
 
-${planoAulaPrompt}
+  ${planoAulaPrompt}
 `
       .split('{{nivel}}').join(dados.nivel)
       .split('{{disciplina}}').join(dados.disciplina)
       .split('{{ano}}').join(dados.ano)
       .split('{{tema}}').join(dados.tema)
-      .split('{{bnccRegras}}').join(bnccRegras)
+      // BNCC agora vem somente do RAG
+      .split('{{bnccRegras}}').join('Utilize exclusivamente as diretrizes presentes no contexto fornecido acima.')
       .split('{{configAula}}').join(configAula)
       .split('{{instrucoesExtras}}').join(instrucoesExtras)
 
-    // 5️⃣ Chamar API Gemini
     return this.chamarGemini(promptFinal)
   }
 
   async gerarAtividade(dados: GerarMaterialDTO): Promise<string> {
     this.validarDTO(dados)
 
-    // 🆕 RAG
     const contextoRag = await this.bnccRetriever.recuperarContexto(dados)
-
-    const bnccRegras = bncc.regras_por_nivel[dados.nivel].join('\n')
 
     const configAtividade = [
       dados.estilo ? `- Estilo: ${dados.estilo}` : '',
@@ -139,7 +131,7 @@ ${atividadePrompt}
       .split('{{disciplina}}').join(dados.disciplina)
       .split('{{ano}}').join(dados.ano)
       .split('{{tema}}').join(dados.tema)
-      .split('{{bnccRegras}}').join(bnccRegras)
+      .split('{{bnccRegras}}').join('Utilize exclusivamente as diretrizes presentes no contexto fornecido acima.')
       .split('{{configAtividade}}').join(configAtividade)
       .split('{{instrucoesExtras}}').join(instrucoesExtras)
 
@@ -149,10 +141,7 @@ ${atividadePrompt}
   async gerarProva(dados: GerarMaterialDTO): Promise<string> {
     this.validarDTO(dados)
 
-    // 🆕 RAG
     const contextoRag = await this.bnccRetriever.recuperarContexto(dados)
-
-    const bnccRegras = bncc.regras_por_nivel[dados.nivel].join('\n')
 
     const configProva = [
       dados.estilo ? `- Estilo de prova: ${dados.estilo}` : '',
@@ -172,7 +161,7 @@ ${provaPrompt}
       .split('{{disciplina}}').join(dados.disciplina)
       .split('{{ano}}').join(dados.ano)
       .split('{{tema}}').join(dados.tema)
-      .split('{{bnccRegras}}').join(bnccRegras)
+      .split('{{bnccRegras}}').join('Utilize exclusivamente as diretrizes presentes no contexto fornecido acima.')
       .split('{{configProva}}').join(configProva)
       .split('{{instrucoesExtras}}').join(instrucoesExtras)
 

@@ -4,6 +4,7 @@ import { GeminiService } from "../../infra/ai/infra/aiServices/geminiService";
 import { GerarConteudoUseCase } from "../../infra/ai/core/useCases/gerarConteudoUseCase";
 import { converterSolicitacaoParaGerarMaterialDTO } from "../../infra/ai/core/dtoAi/conversor";
 import { IRepository } from "../interfaces/IRepository";
+import { IBnccRetriever } from "../../infra/ai/infra/retrieval/core/interfaces/IBnccRetriever";
 
 /**
  * Type para a solicitação enriquecida com nomes de disciplina e assunto
@@ -27,11 +28,22 @@ export class IAClientService implements IIAClient {
   private gerarConteudoUseCase: GerarConteudoUseCase;
   private repository: IRepository;
 
-  constructor(repository: IRepository) {
-    // Instancia os serviços da camada AI
-    const geminiService = new GeminiService();
+  // 🆕 Retriever injetado no boot
+  private bnccRetriever: IBnccRetriever;
+
+  constructor(repository: IRepository, bnccRetriever: IBnccRetriever) {
+    /**
+     * 🔹 1. Instancia os serviços da camada AI
+     * (Gemini agora recebe o retriever pronto com a base vetorial carregada)
+     */
+    const geminiService = new GeminiService(bnccRetriever);
     this.gerarConteudoUseCase = new GerarConteudoUseCase(geminiService);
+
+    /**
+     * 🔹 2. Infra de domínio
+     */
     this.repository = repository;
+    this.bnccRetriever = bnccRetriever;
   }
 
   async gerarConteudoAsync(
@@ -63,7 +75,9 @@ export class IAClientService implements IIAClient {
       }
 
       // 1️⃣ CONVERTE: SolicitacaoConteudo → GerarMaterialDTO
-      const materialDTO = converterSolicitacaoParaGerarMaterialDTO(solicitacaoEnriquecida as SolicitacaoConteudo);
+      const materialDTO = converterSolicitacaoParaGerarMaterialDTO(
+        solicitacaoEnriquecida as SolicitacaoConteudo
+      );
 
       // 2️⃣ CHAMA A IA baseado no tipo de conteúdo
       let resposta;

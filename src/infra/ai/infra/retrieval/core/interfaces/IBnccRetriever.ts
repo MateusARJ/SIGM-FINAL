@@ -1,4 +1,4 @@
-import { GerarMaterialDTO } from "../../../core/dtoAi/entradaDto";
+import { GerarMaterialDTO } from "../../../../core/dtoAi/entradaDto";
 
 /**
  * Contrato para qualquer mecanismo de recuperação
