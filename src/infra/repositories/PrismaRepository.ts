@@ -1,6 +1,6 @@
 import { PrismaClient } from "@prisma/client";
 import { IRepository } from "../../domain/interfaces/IRepository";
-import type { Assunto, Disciplina, AnoLetivo } from "../../domain/interfaces/IConfiguracaoConteudo";
+import type { Assunto, Disciplina, AnoLetivo } from "../../domain/models/ConfiguracaoConteudo";
 import { SolicitacaoConteudo, RegistroConteudo } from "../../../src/domain/models/RequisicaoModelo";
 
 export class PrismaRepository implements IRepository {

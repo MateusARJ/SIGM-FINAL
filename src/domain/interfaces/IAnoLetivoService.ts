@@ -1,4 +1,4 @@
-import { AnoLetivo } from "./IConfiguracaoConteudo"
+import { AnoLetivo } from "../models/ConfiguracaoConteudo"
 
 export interface IAnoLetivoService {
   list(): Promise<AnoLetivo[]>

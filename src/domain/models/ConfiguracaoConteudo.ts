@@ -1,4 +1,4 @@
-import type { AnoOuSerie } from "../models/TiposBasicos";
+import type { AnoOuSerie } from "./TiposBasicos";
 
 // ============================================
 // INTERFACES (Objetos Complexos)

@@ -1,4 +1,4 @@
-import { Assunto } from "./IConfiguracaoConteudo"
+import { Assunto } from "../models/ConfiguracaoConteudo"
 
 export interface IAssuntoService {
   list(): Promise<Assunto[]>

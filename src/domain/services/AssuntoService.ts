@@ -2,7 +2,7 @@
 import { v4 as uuidv4 } from 'uuid';
 import { IAssuntoService } from "../interfaces/IAssuntoService";
 import { IRepository } from "../interfaces/IRepository";
-import { Assunto } from "../interfaces/IConfiguracaoConteudo";
+import { Assunto } from "../models/ConfiguracaoConteudo";
 
 export class AssuntoService implements IAssuntoService {
 

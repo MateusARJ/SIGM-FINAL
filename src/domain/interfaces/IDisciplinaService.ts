@@ -1,4 +1,4 @@
-import { Disciplina } from "./IConfiguracaoConteudo";
+import { Disciplina } from "../models/ConfiguracaoConteudo";
 
 export interface IDisciplinaService {
   list(): Promise<Disciplina[]>

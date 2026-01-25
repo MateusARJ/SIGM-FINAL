@@ -1,5 +1,5 @@
 import type { IRepository } from "../../domain/interfaces/IRepository"; // Ajuste o caminho conforme sua pasta
-import type { Assunto, Disciplina, AnoLetivo } from "../../domain/interfaces/IConfiguracaoConteudo";
+import type { Assunto, Disciplina, AnoLetivo } from "../../domain/models/ConfiguracaoConteudo";
 import { RegistroConteudo } from "../../domain/models/RequisicaoModelo";
 
 export class InMemoryRepository implements IRepository {

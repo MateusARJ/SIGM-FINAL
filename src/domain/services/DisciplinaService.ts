@@ -1,5 +1,5 @@
 import { IRepository } from "../interfaces/IRepository";
-import { Disciplina } from "../interfaces/IConfiguracaoConteudo";
+import { Disciplina } from "../models/ConfiguracaoConteudo";
 import { IDisciplinaService } from "../interfaces/IDisciplinaService";
 import { v4 as uuidv4 } from 'uuid';
 

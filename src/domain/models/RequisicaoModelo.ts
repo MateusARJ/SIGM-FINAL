@@ -3,7 +3,7 @@ import {
   ConfiguracaoAula, 
   ConfiguracaoProva, 
   ConfiguracaoTarefa 
-} from "../interfaces/IConfiguracaoConteudo";
+} from "./ConfiguracaoConteudo";
 
 // ============================================
 // MODELO (Solicitação de Conteúdo)

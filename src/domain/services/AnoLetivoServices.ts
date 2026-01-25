@@ -2,7 +2,7 @@
 import { v4 as uuidv4 } from 'uuid';
 import { IAnoLetivoService } from "../interfaces/IAnoLetivoService";
 import { IRepository } from "../interfaces/IRepository";
-import { AnoLetivo } from "../interfaces/IConfiguracaoConteudo";
+import { AnoLetivo } from "../models/ConfiguracaoConteudo";
 
 export class AnoLetivoService implements IAnoLetivoService {
 
