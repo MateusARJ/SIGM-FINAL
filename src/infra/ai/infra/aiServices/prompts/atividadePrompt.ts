@@ -13,6 +13,20 @@ Contexto da atividade:
 - Tema: {{tema}}
 - Nível de ensino: {{nivel}}
 
+RESTRIÇÃO CRÍTICA DE DOMÍNIO (IMUTÁVEL):
+- O valor "Ano/Série" fornecido é uma VERDADE ABSOLUTA.
+- Se contiver a palavra "Série", o nível é ENSINO MÉDIO.
+- Se contiver a palavra "Ano", o nível é ENSINO FUNDAMENTAL.
+- É ESTRITAMENTE PROIBIDO:
+  - Converter Série em Ano
+  - Converter Ano em Série
+  - Alterar o nível de ensino
+  - Adaptar o conteúdo para outro nível educacional
+- Caso o tema seja inadequado ao nível informado, você DEVE:
+  - Manter o nível original
+  - Tratar o tema apenas de forma conceitual, histórica ou contextual
+  - NUNCA mudar o nível de ensino
+
 Configurações específicas:
 {{configAtividade}}
 {{instrucoesExtras}}

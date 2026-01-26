@@ -15,6 +15,34 @@ type SolicitacaoEnriquecida = SolicitacaoConteudo & {
 };
 
 /**
+ * Type FINAL que representa a solicitação
+ * completamente enriquecida e pronta para IA.
+ *
+ * Aqui NÃO EXISTEM propriedades opcionais.
+ */
+type SolicitacaoConteudoEnriquecida = SolicitacaoConteudo & {
+  nomeDisciplina: string;
+  assuntoTitulo: string;
+};
+
+/**
+ * Type guard que garante que a solicitação
+ * está completamente enriquecida e pronta
+ * para ser enviada à IA.
+ *
+ * Necessário por causa do
+ * `exactOptionalPropertyTypes`.
+ */
+function isSolicitacaoConteudoEnriquecida(
+  solicitacao: SolicitacaoEnriquecida
+): solicitacao is SolicitacaoConteudoEnriquecida {
+  return (
+    typeof solicitacao.nomeDisciplina === "string" &&
+    typeof solicitacao.assuntoTitulo === "string"
+  );
+}
+
+/**
  * IAClientService: Adaptador entre a camada de Services e a camada AI
  * 
  * Responsabilidades:
@@ -28,80 +56,126 @@ export class IAClientService implements IIAClient {
   private gerarConteudoUseCase: GerarConteudoUseCase;
   private repository: IRepository;
 
-  // 🆕 Retriever injetado no boot
-  private bnccRetriever: IBnccRetriever;
-
   constructor(repository: IRepository, bnccRetriever: IBnccRetriever) {
-    /**
-     * 🔹 1. Instancia os serviços da camada AI
-     * (Gemini agora recebe o retriever pronto com a base vetorial carregada)
-     */
+    // Instancia os serviços da camada AI
     const geminiService = new GeminiService(bnccRetriever);
     this.gerarConteudoUseCase = new GerarConteudoUseCase(geminiService);
-
-    /**
-     * 🔹 2. Infra de domínio
-     */
     this.repository = repository;
-    this.bnccRetriever = bnccRetriever;
   }
 
   async gerarConteudoAsync(
     solicitacao: SolicitacaoConteudo
   ): Promise<{ tipo: string; conteudo: string }> {
-    
+
     try {
-      // 0️⃣ ENRIQUECER: Buscar nomes de disciplina e assunto pelos IDs
+      // ============================
+      // 0️⃣ ENRIQUECER SOLICITAÇÃO
+      // ============================
+
+      /**
+       * A solicitação original contém apenas IDs.
+       * Aqui enriquecemos com dados SEMÂNTICOS reais
+       * que a IA consegue entender.
+       */
       const solicitacaoEnriquecida: SolicitacaoEnriquecida = { ...solicitacao };
-      
+
+      // ---------- DISCIPLINA ----------
       try {
-        const disciplina = await this.repository.getDisciplinaById(solicitacao.disciplinaId);
+        const disciplina = await this.repository.getDisciplinaById(
+          solicitacao.disciplinaId
+        );
+
         if (disciplina) {
           solicitacaoEnriquecida.nomeDisciplina = disciplina.nome;
           console.log(`✅ Disciplina encontrada: ${disciplina.nome}`);
         }
-      } catch (e) {
-        console.warn(`⚠️ Não conseguiu buscar disciplina com ID: ${solicitacao.disciplinaId}`);
+      } catch {
+        console.warn(
+          `⚠️ Não foi possível buscar disciplina com ID: ${solicitacao.disciplinaId}`
+        );
       }
 
+      // ---------- ASSUNTO ----------
       try {
-        const assunto = await this.repository.getAssuntoById(solicitacao.assuntoId);
+        const assunto = await this.repository.getAssuntoById(
+          solicitacao.assuntoId
+        );
+
         if (assunto) {
           solicitacaoEnriquecida.assuntoTitulo = assunto.nome;
           console.log(`✅ Assunto encontrado: ${assunto.nome}`);
         }
-      } catch (e) {
-        console.warn(`⚠️ Não conseguiu buscar assunto com ID: ${solicitacao.assuntoId}`);
+      } catch {
+        console.warn(
+          `⚠️ Não foi possível buscar assunto com ID: ${solicitacao.assuntoId}`
+        );
       }
 
-      // 1️⃣ CONVERTE: SolicitacaoConteudo → GerarMaterialDTO
-      const materialDTO = converterSolicitacaoParaGerarMaterialDTO(
-        solicitacaoEnriquecida as SolicitacaoConteudo
-      );
+      // ============================
+      // VALIDAÇÃO DE ENRIQUECIMENTO
+      // ============================
 
-      // 2️⃣ CHAMA A IA baseado no tipo de conteúdo
+      if (!isSolicitacaoConteudoEnriquecida(solicitacaoEnriquecida)) {
+        throw new Error(
+          "Solicitação não foi enriquecida corretamente. IA não pode receber IDs."
+        );
+      }
+
+      /**
+       * A partir daqui o TypeScript TEM GARANTIA
+       * de que os dados semânticos existem.
+       */
+      const solicitacaoProntaParaIA: SolicitacaoConteudoEnriquecida =
+        solicitacaoEnriquecida;
+
+      /**
+       * IMPORTANTE:
+       * anoLetivo NÃO é ID.
+       * Ele já chega como string humana ("9º ano", "1ª série")
+       * e NÃO precisa de enriquecimento.
+       */
+
+      // ============================
+      // 1️⃣ CONVERSÃO PARA DTO DA IA
+      // ============================
+
+      const materialDTO =
+        converterSolicitacaoParaGerarMaterialDTO(solicitacaoProntaParaIA);
+
+      // ============================
+      // 2️⃣ CHAMADA DA IA
+      // ============================
+
       let resposta;
+
       switch (solicitacao.tipoConteudo) {
         case "aula":
-          resposta = await this.gerarConteudoUseCase.gerarPlano(materialDTO);
+          resposta = await this.gerarConteudoUseCase.gerarPlanoAula(materialDTO);
           break;
+
         case "prova":
           resposta = await this.gerarConteudoUseCase.gerarProva(materialDTO);
           break;
+
         case "tarefa":
           resposta = await this.gerarConteudoUseCase.gerarAtividade(materialDTO);
           break;
+
         default:
-          throw new Error('Tipo de conteúdo não identificável');
+          throw new Error("Tipo de conteúdo não suportado");
       }
 
-      // 3️⃣ RETORNA o resultado da IA
+      // ============================
+      // 3️⃣ RETORNO
+      // ============================
+
       return {
         tipo: resposta.tipo,
         conteudo: resposta.conteudo
       };
+
     } catch (error) {
-      console.error('Erro ao gerar conteúdo na IA:', error);
+      console.error("❌ Erro ao gerar conteúdo na IA:", error);
       throw error;
     }
   }
