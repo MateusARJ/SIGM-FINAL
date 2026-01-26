@@ -1,6 +1,6 @@
 import { SolicitacaoConteudo } from "../../../../domain/models/RequisicaoModelo";
 import { GerarMaterialDTO } from "./entradaDto";
-import { SolicitacaoConteudoEnriquecida } from "../../../../domain/models/RequisicaoModelo";
+import { SolicitacaoConteudoResolvida } from "../../../../domain/models/SolicitacaoConteudoResolvida";
 
 /**
  * Converte SolicitacaoConteudo (formato dos Services)
@@ -12,7 +12,7 @@ import { SolicitacaoConteudoEnriquecida } from "../../../../domain/models/Requis
  * - Se algo essencial não existir → ERRO (fail fast)
  */
 export function converterSolicitacaoParaGerarMaterialDTO(
-  solicitacao: SolicitacaoConteudoEnriquecida
+  solicitacao: SolicitacaoConteudoResolvida
 ): GerarMaterialDTO {
 
   // ============================

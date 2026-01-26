@@ -38,10 +38,7 @@ export interface DadosComuns {
   disciplinaId: string;
   assuntoId: string;
 
-  //
-
-  anoLetivo: string;    
-  assuntoTitulo: string;     
+  //  
   instrucoesExtras?: string; 
 }
 
