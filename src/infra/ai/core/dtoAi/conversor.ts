@@ -1,5 +1,6 @@
 import { SolicitacaoConteudo } from "../../../../domain/models/RequisicaoModelo";
 import { GerarMaterialDTO } from "./entradaDto";
+import { SolicitacaoConteudoEnriquecida } from "../../../../domain/models/RequisicaoModelo";
 
 /**
  * Converte SolicitacaoConteudo (formato dos Services)
@@ -11,7 +12,7 @@ import { GerarMaterialDTO } from "./entradaDto";
  * - Se algo essencial não existir → ERRO (fail fast)
  */
 export function converterSolicitacaoParaGerarMaterialDTO(
-  solicitacao: SolicitacaoConteudo
+  solicitacao: SolicitacaoConteudoEnriquecida
 ): GerarMaterialDTO {
 
   // ============================
@@ -35,8 +36,9 @@ export function converterSolicitacaoParaGerarMaterialDTO(
    *
    * Se não existirem aqui, a IA NÃO pode ser chamada.
    */
-  const nomeDisciplina = (solicitacao as any).nomeDisciplina;
-  const assuntoTitulo = (solicitacao as any).assuntoTitulo;
+  const nomeDisciplina = solicitacao.nomeDisciplina;
+  const assuntoTitulo = solicitacao.assuntoTitulo;
+
 
   if (!nomeDisciplina || typeof nomeDisciplina !== "string") {
     throw new Error(

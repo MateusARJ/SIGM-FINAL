@@ -14,6 +14,34 @@ type SolicitacaoEnriquecida = SolicitacaoConteudo & {
 };
 
 /**
+ * Type FINAL que representa a solicitação
+ * completamente enriquecida e pronta para IA.
+ *
+ * Aqui NÃO EXISTEM propriedades opcionais.
+ */
+type SolicitacaoConteudoEnriquecida = SolicitacaoConteudo & {
+  nomeDisciplina: string;
+  assuntoTitulo: string;
+};
+
+/**
+ * Type guard que garante que a solicitação
+ * está completamente enriquecida e pronta
+ * para ser enviada à IA.
+ *
+ * Necessário por causa do
+ * `exactOptionalPropertyTypes`.
+ */
+function isSolicitacaoConteudoEnriquecida(
+  solicitacao: SolicitacaoEnriquecida
+): solicitacao is SolicitacaoConteudoEnriquecida {
+  return (
+    typeof solicitacao.nomeDisciplina === "string" &&
+    typeof solicitacao.assuntoTitulo === "string"
+  );
+}
+
+/**
  * IAClientService: Adaptador entre a camada de Services e a camada AI
  * 
  * Responsabilidades:
@@ -82,6 +110,23 @@ export class IAClientService implements IIAClient {
         );
       }
 
+      // ============================
+      // VALIDAÇÃO DE ENRIQUECIMENTO
+      // ============================
+
+      if (!isSolicitacaoConteudoEnriquecida(solicitacaoEnriquecida)) {
+        throw new Error(
+          "Solicitação não foi enriquecida corretamente. IA não pode receber IDs."
+        );
+      }
+
+      /**
+       * A partir daqui o TypeScript TEM GARANTIA
+       * de que os dados semânticos existem.
+       */
+      const solicitacaoProntaParaIA: SolicitacaoConteudoEnriquecida =
+        solicitacaoEnriquecida;
+
       /**
        * IMPORTANTE:
        * anoLetivo NÃO é ID.
@@ -94,7 +139,7 @@ export class IAClientService implements IIAClient {
       // ============================
 
       const materialDTO =
-        converterSolicitacaoParaGerarMaterialDTO(solicitacaoEnriquecida);
+        converterSolicitacaoParaGerarMaterialDTO(solicitacaoProntaParaIA);
 
       // ============================
       // 2️⃣ CHAMADA DA IA

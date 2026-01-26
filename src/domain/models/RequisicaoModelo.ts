@@ -20,6 +20,23 @@ export type SolicitacaoConteudo = DadosComuns & (
   | ConfiguracaoTarefa
 );
 
+// PARTE NOVA: ajustar futuramente, para casos de uso
+
+/**
+ * Tipo que representa uma solicitação JÁ ENRIQUECIDA
+ * com dados semânticos.
+ *
+ * ⚠️ REGRA CRÍTICA:
+ * - A IA NUNCA pode receber IDs
+ * - Esse tipo garante que disciplina e assunto
+ *   já foram resolvidos antes da conversão
+ */
+export type SolicitacaoConteudoEnriquecida =
+  SolicitacaoConteudo & {
+    nomeDisciplina: string;
+    assuntoTitulo: string;
+  };
+
 /**
  * Essa é a interface do que vai para o banco (o objeto completo)
  */
