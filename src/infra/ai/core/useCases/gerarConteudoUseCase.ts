@@ -5,7 +5,7 @@ import { RespostaGeracaoDTO } from '../dtoAi/saidaDto'
 export class GerarConteudoUseCase {
   constructor(private iaService: IAService) {}
 
-  async gerarPlano(dados: GerarMaterialDTO): Promise<RespostaGeracaoDTO> {
+  async gerarPlanoAula(dados: GerarMaterialDTO): Promise<RespostaGeracaoDTO> {
     const conteudo = await this.iaService.gerarPlanoAula(dados)
 
     return {

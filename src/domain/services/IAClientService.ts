@@ -37,57 +37,99 @@ export class IAClientService implements IIAClient {
   async gerarConteudoAsync(
     solicitacao: SolicitacaoConteudo
   ): Promise<{ tipo: string; conteudo: string }> {
-    
+
     try {
-      // 0️⃣ ENRIQUECER: Buscar nomes de disciplina e assunto pelos IDs
+      // ============================
+      // 0️⃣ ENRIQUECER SOLICITAÇÃO
+      // ============================
+
+      /**
+       * A solicitação original contém apenas IDs.
+       * Aqui enriquecemos com dados SEMÂNTICOS reais
+       * que a IA consegue entender.
+       */
       const solicitacaoEnriquecida: SolicitacaoEnriquecida = { ...solicitacao };
-      
+
+      // ---------- DISCIPLINA ----------
       try {
-        const disciplina = await this.repository.getDisciplinaById(solicitacao.disciplinaId);
+        const disciplina = await this.repository.getDisciplinaById(
+          solicitacao.disciplinaId
+        );
+
         if (disciplina) {
           solicitacaoEnriquecida.nomeDisciplina = disciplina.nome;
           console.log(`✅ Disciplina encontrada: ${disciplina.nome}`);
         }
-      } catch (e) {
-        console.warn(`⚠️ Não conseguiu buscar disciplina com ID: ${solicitacao.disciplinaId}`);
+      } catch {
+        console.warn(
+          `⚠️ Não foi possível buscar disciplina com ID: ${solicitacao.disciplinaId}`
+        );
       }
 
+      // ---------- ASSUNTO ----------
       try {
-        const assunto = await this.repository.getAssuntoById(solicitacao.assuntoId);
+        const assunto = await this.repository.getAssuntoById(
+          solicitacao.assuntoId
+        );
+
         if (assunto) {
           solicitacaoEnriquecida.assuntoTitulo = assunto.nome;
           console.log(`✅ Assunto encontrado: ${assunto.nome}`);
         }
-      } catch (e) {
-        console.warn(`⚠️ Não conseguiu buscar assunto com ID: ${solicitacao.assuntoId}`);
+      } catch {
+        console.warn(
+          `⚠️ Não foi possível buscar assunto com ID: ${solicitacao.assuntoId}`
+        );
       }
 
-      // 1️⃣ CONVERTE: SolicitacaoConteudo → GerarMaterialDTO
-      const materialDTO = converterSolicitacaoParaGerarMaterialDTO(solicitacaoEnriquecida as SolicitacaoConteudo);
+      /**
+       * IMPORTANTE:
+       * anoLetivo NÃO é ID.
+       * Ele já chega como string humana ("9º ano", "1ª série")
+       * e NÃO precisa de enriquecimento.
+       */
 
-      // 2️⃣ CHAMA A IA baseado no tipo de conteúdo
+      // ============================
+      // 1️⃣ CONVERSÃO PARA DTO DA IA
+      // ============================
+
+      const materialDTO =
+        converterSolicitacaoParaGerarMaterialDTO(solicitacaoEnriquecida);
+
+      // ============================
+      // 2️⃣ CHAMADA DA IA
+      // ============================
+
       let resposta;
+
       switch (solicitacao.tipoConteudo) {
         case "aula":
-          resposta = await this.gerarConteudoUseCase.gerarPlano(materialDTO);
+          resposta = await this.gerarConteudoUseCase.gerarPlanoAula(materialDTO);
           break;
+
         case "prova":
           resposta = await this.gerarConteudoUseCase.gerarProva(materialDTO);
           break;
+
         case "tarefa":
           resposta = await this.gerarConteudoUseCase.gerarAtividade(materialDTO);
           break;
+
         default:
-          throw new Error('Tipo de conteúdo não identificável');
+          throw new Error("Tipo de conteúdo não suportado");
       }
 
-      // 3️⃣ RETORNA o resultado da IA
+      // ============================
+      // 3️⃣ RETORNO
+      // ============================
+
       return {
         tipo: resposta.tipo,
         conteudo: resposta.conteudo
       };
+
     } catch (error) {
-      console.error('Erro ao gerar conteúdo na IA:', error);
+      console.error("❌ Erro ao gerar conteúdo na IA:", error);
       throw error;
     }
   }
