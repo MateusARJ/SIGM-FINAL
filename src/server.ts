@@ -29,7 +29,7 @@ app.use(express.json());
  * (baixo nível)
  */
 const repository = new PrismaRepository();
-const ia = new IAClientService();
+const ia = new IAClientService(repository);
 const criarUseCase = new CriarConteudoUseCase(repository, ia)
 const editarUseCase = new EditarConteudoUseCase(repository)
 const excluirUseCase = new ExcluirConteudoUseCase(repository)
@@ -40,7 +40,6 @@ const obterUseCase = new ObterConteudoUseCase(repository)
  * 🔹 2. Cria os services
  * (alto nível, dependem apenas de interfaces)
  */
-const iaClient = new IAClientService();
 const assuntoService = new AssuntoService(repository);
 const disciplinaService = new DisciplinaService(repository);
 const conteudoService = new ConteudoService(criarUseCase, obterUseCase, verificarUseCase, editarUseCase, excluirUseCase);

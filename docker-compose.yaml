@@ -1,0 +1,22 @@
+version: '3.9'
+
+services:
+  # Serviço do Banco de Dados Vetorial (ChromaDB)
+  vectordb:
+    image: chromadb/chroma:latest
+    container_name: bncc_vectordb
+    ports:
+      - "8000:8000" # Porta que você vai acessar no seu código (localhost:8000)
+    volumes:
+      # Isso cria uma pasta 'chroma_data' no seu projeto para salvar os dados
+      # Se você reiniciar o PC, os dados continuam lá (persistência)
+      - ./chroma_data:/chroma/.chroma/index
+    environment:
+      - IS_PERSISTENT=TRUE
+      - ANONYMIZED_TELEMETRY=FALSE # Desativa envio de dados para a Chroma
+    networks:
+      - hackathon-net
+
+networks:
+  hackathon-net:
+    driver: bridge
