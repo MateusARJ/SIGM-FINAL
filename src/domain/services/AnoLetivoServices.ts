@@ -6,15 +6,15 @@ import { AnoLetivo } from "../models/ConfiguracaoConteudo";
 
 export class AnoLetivoService implements IAnoLetivoService {
 
-  constructor(private repository: IRepository) {}
+  constructor(private repository: IRepository) { }
 
   async list(): Promise<AnoLetivo[]> {
     return this.repository.getAllAnoLetivos();
   }
 
-  async get(id: string): Promise<AnoLetivo> {
-    const AnoLetivo = await this.repository.getAnoLetivoById(id);
-    if (!AnoLetivo) throw new Error(`AnoLetivo com ID ${id} não encontrado.`);
+  async get(serieId: string): Promise<AnoLetivo> {
+    const AnoLetivo = await this.repository.getAnoLetivoById(serieId);
+    if (!AnoLetivo) throw new Error(`AnoLetivo com ID ${serieId} não encontrado.`);
     return AnoLetivo;
   }
 
@@ -42,23 +42,35 @@ export class AnoLetivoService implements IAnoLetivoService {
     return newAnoLetivo;
   }
 
-  async update(id: string, data: Partial<Omit<AnoLetivo, 'id'>>): Promise<void> {
-    const atual = await this.get(id); // Garante que existe
-    
+  async update(serieId: string, data: Partial<Omit<AnoLetivo, 'id'>>): Promise<void> {
+    const atual = await this.get(serieId); // Garante que existe
+
+    const nomeFinal = data.nome ?? atual.nome;
+
+    const todos = await this.repository.getAllAnoLetivos();
+    const duplicado = todos.find(a =>
+      a.serieId !== serieId &&
+      a.nome.toLowerCase() === nomeFinal.toLowerCase()
+    );
+
+    if (duplicado) {
+      throw new Error(`Já existe outro Ano letivo '${nomeFinal}'.`);
+    }
+
     const atualizado = {
-        ...atual,
-        ...data
+      ...atual,
+      ...data
     };
 
     await this.repository.updateAnoLetivo(atualizado);
   }
 
-  async delete(id: string): Promise<void> {
-    const deletado = await this.get(id); // Garante que existe antes de tentar deletar
+  async delete(serieId: string): Promise<void> {
+    const deletado = await this.get(serieId); // Garante que existe antes de tentar deletar
     if (!deletado) {
-      throw new Error(`Ano letivo com ID ${id} não encontrado para deleção.`);
+      throw new Error(`Ano letivo com ID ${serieId} não encontrado para deleção.`);
     }
-    await this.repository.deleteAnoLetivo(id);
+    await this.repository.deleteAnoLetivo(serieId);
   }
 }
 
