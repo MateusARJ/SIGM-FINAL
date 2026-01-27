@@ -3,70 +3,61 @@ import fs from 'fs';
 import path from 'path';
 import { ChromaClient } from 'chromadb';
 import { pipeline } from '@xenova/transformers';
-import PDFParser from 'pdf2json';
+
+// --- IMPORT PADRÃO (Conforme solicitado) ---
+// Isso requer "esModuleInterop": true no seu tsconfig.json
+import pdf from 'pdf-parse';
+// -------------------------------------------
 
 // --- CONFIGURAÇÕES ---
-const PASTA_DOCS = 'docs_rag';
+// Se você já renomeou as pastas para 'data', mude aqui.
+// Vou deixar 'docs_rag' para garantir que funcione agora.
+const PASTA_DOCS = path.join(process.cwd(), 'data'); 
 const COLLECTION_NAME = 'bncc-docs';
 const CHROMA_URL = 'http://localhost:8000';
 
-// Inicializa cliente
 const chroma = new ChromaClient({ path: CHROMA_URL });
 
-// --- FUNÇÃO AUXILIAR PARA A NOVA LIB ---
-// Transforma a leitura baseada em eventos do pdf2json em uma Promessa simples
-async function lerPdfComPdf2Json(buffer: Buffer): Promise<string> {
-    return new Promise((resolve, reject) => {
-        const pdfParser = new PDFParser(null, true); // true = extrair texto puro
-
-        pdfParser.on("pdfParser_dataError", (errData: any) => reject(errData.parserError));
-        
-        pdfParser.on("pdfParser_dataReady", (pdfData: any) => {
-            // O pdf2json retorna o texto meio "sujo" (URL encoded), precisamos limpar
-            const textoBruto = pdfParser.getRawTextContent();
-            resolve(textoBruto);
-        });
-
-        pdfParser.parseBuffer(buffer);
-    });
-}
-// --------------------------------------
-
 async function main() {
-    console.log("🚀 Iniciando ingestão com PDF2JSON (Nova Lib)...");
+    console.log("🚀 Iniciando ingestão com PDF-PARSE v1.1.1...");
 
-    // 1. Carrega IA Local
     console.log("📥 Carregando modelo de embeddings local...");
     const extractor = await pipeline('feature-extraction', 'Xenova/paraphrase-multilingual-MiniLM-L12-v2');
 
-    // 2. Prepara o Banco
+    // Limpa e recria a coleção
     try { await chroma.deleteCollection({ name: COLLECTION_NAME }); } catch (e) { /* Ignora */ }
     const collection = await chroma.createCollection({ name: COLLECTION_NAME });
 
-    // 3. Verifica Arquivos
+    // Verifica pasta
     if (!fs.existsSync(PASTA_DOCS)) {
         console.error(`❌ Pasta não encontrada: ${PASTA_DOCS}`);
         return;
     }
     const arquivos = fs.readdirSync(PASTA_DOCS).filter(f => f.endsWith('.pdf'));
 
-    // 4. Processa
     for (const arquivo of arquivos) {
         console.log(`📄 Lendo: ${arquivo}`);
         const caminho = path.join(PASTA_DOCS, arquivo);
         const buffer = fs.readFileSync(caminho);
 
         try {
-            // Usa a nova biblioteca aqui
-            const textoCompleto = await lerPdfComPdf2Json(buffer);
+            // --- CORREÇÃO DE COMPATIBILIDADE V1.1.1 ---
+            // O pdf-parse v1.1.1 exporta um módulo CommonJS.
+            // O TypeScript às vezes importa como objeto { default: func } e às vezes como a função direta.
+            // Essa linha resolve o conflito dinamicamente:
+            const pdfParser = (typeof pdf === 'function') ? pdf : (pdf as any).default;
             
-            // Chunking
+            // Agora chamamos a função segura
+            const data = await pdfParser(buffer);
+            const textoCompleto = data.text;
+            // -------------------------------------------
+
             const chunks = dividirTexto(textoCompleto, 1000);
             console.log(`   ⚡ Vetorizando ${chunks.length} trechos...`);
 
             for (let i = 0; i < chunks.length; i++) {
                 const trecho = chunks[i];
-                if (!trecho || trecho.length < 20) continue; // Filtra sujeira
+                if (!trecho || trecho.trim().length < 20) continue; 
 
                 const output = await extractor(trecho, { pooling: 'mean', normalize: true });
                 const vector = Array.from(output.data);
@@ -83,7 +74,7 @@ async function main() {
             console.log("\n   ✅ Salvo!");
 
         } catch (erro) {
-            console.error(`❌ Falha ao ler ${arquivo}:`, erro);
+            console.error(`❌ Erro no arquivo ${arquivo}:`, erro);
         }
     }
     console.log("🏁 Ingestão Finalizada!");
@@ -92,8 +83,9 @@ async function main() {
 function dividirTexto(texto: string, tamanho: number): string[] {
     const chunks = [];
     if (!texto) return [];
-    // Limpeza extra de quebras de linha excessivas comuns em PDFs
-    const textoLimpo = texto.replace(/(\r\n|\n|\r)/gm, " ");
+    
+    // Limpeza de quebras de linha para melhorar a busca semântica
+    const textoLimpo = texto.replace(/\n/g, " ").replace(/\s+/g, " ");
     
     for (let i = 0; i < textoLimpo.length; i += tamanho) {
         chunks.push(textoLimpo.slice(i, i + tamanho));

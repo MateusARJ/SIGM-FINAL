@@ -86,7 +86,7 @@ npm install --save-dev @types/pdf2json
 
 Script responsável por ler os PDFs da pasta `docs_rag/`, "quebrar" em pedaços e salvar no banco.
 
-**Local:** `script_rag/ingest-bncc.ts`
+**Local:** `scripts/ingest-bncc.ts`
 **Destaque:** Usa IA Local para não gastar cota do Google.
 
 ```typescript
@@ -102,7 +102,7 @@ Script responsável por ler os PDFs da pasta `docs_rag/`, "quebrar" em pedaços 
 **Como rodar (da raiz do projeto):**
 
 ```bash
-npx ts-node script_rag/ingest-bncc.ts
+npx ts-node scripts/ingest-bncc.ts
 
 ```
 
@@ -146,7 +146,7 @@ SIGM/
 ├── docker-compose.yml       # Infra do Banco Vetorial
 ├── chroma_data/             # Dados do banco (gerado pelo Docker)
 ├── docs_rag/                # Onde ficam os PDFs oficiais (BNCC, etc)
-├── script_rag/
+├── scripts/
 │   └── ingest-bncc.ts       # Script de Ingestão (Roda 1 vez)
 ├── src/
 │   ├── infra/
@@ -168,7 +168,7 @@ Para o sistema funcionar em um ambiente novo (ex: AWS ou outro PC):
 2. [ ] Colocar os PDFs na pasta `docs_rag`.
 3. [ ] Subir o banco: `docker compose up -d`.
 4. [ ] Instalar dependências: `npm install`.
-5. [ ] Popular o banco: `npx ts-node script_rag/ingest-bncc.ts`.
+5. [ ] Popular o banco: `npx ts-node script/ingest-bncc.ts`.
 6. [ ] Rodar a API: `npm run dev`.
 
 ---
