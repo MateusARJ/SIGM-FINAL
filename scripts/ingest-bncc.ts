@@ -3,16 +3,14 @@ import fs from 'fs';
 import path from 'path';
 import { ChromaClient } from 'chromadb';
 import { pipeline } from '@xenova/transformers';
-
-// --- IMPORT PADRÃO (Conforme solicitado) ---
-// Isso requer "esModuleInterop": true no seu tsconfig.json
 import pdf from 'pdf-parse';
+
 // -------------------------------------------
 
 // --- CONFIGURAÇÕES ---
 // Se você já renomeou as pastas para 'data', mude aqui.
 // Vou deixar 'docs_rag' para garantir que funcione agora.
-const PASTA_DOCS = path.join(process.cwd(), 'data'); 
+const PASTA_DOCS = path.join(process.cwd(), 'docs_source'); 
 const COLLECTION_NAME = 'bncc-docs';
 const CHROMA_URL = 'http://localhost:8000';
 
