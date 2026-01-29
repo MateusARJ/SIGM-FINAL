@@ -1,0 +1,9 @@
+node_modules
+chroma_data
+dist
+docs
+data       # Se você não precisar ler os PDFs em tempo de execução (apenas na ingestão) 
+.git
+.env
+Dockerfile
+docker-compose.yml

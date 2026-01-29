@@ -66,7 +66,22 @@ export class DisciplinaService implements IDisciplinaService {
     async update(id: string, data: Partial<Omit<Disciplina, 'id'>>): Promise<Disciplina> {
         const atual = await this.get(id); // Garante que existe
 
-        const atualizado = {
+        const nomeFinal = data.nome ?? atual.nome;
+        const serieFinal = data.serieId ?? atual.serieId;
+
+        // 🔎 Verifica duplicidade (ignorando o próprio registro)
+        const todas = await this.repository.getAllDisciplinas();
+        const duplicado = todas.find(d =>
+            d.id !== id &&
+            d.nome.toLowerCase() === nomeFinal.toLowerCase() &&
+            d.serieId === serieFinal
+        );
+
+        if (duplicado) {
+            throw new Error(`Já existe outra disciplina '${nomeFinal}' neste Ano Letivo.`);
+        }
+
+        const atualizado: Disciplina = {
             ...atual,
             ...data
         };
@@ -74,6 +89,7 @@ export class DisciplinaService implements IDisciplinaService {
         await this.repository.updateDisciplina(atualizado);
         return atualizado;
     }
+
     async delete(id: string): Promise<void> {
         await this.get(id);
         await this.repository.deleteDisciplina(id);

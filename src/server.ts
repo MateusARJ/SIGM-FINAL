@@ -29,7 +29,7 @@ app.use(express.json());
  * (baixo nível)
  */
 const repository = new PrismaRepository();
-const ia = new IAClientService();
+const ia = new IAClientService(repository);
 const criarUseCase = new CriarConteudoUseCase(repository, ia)
 const editarUseCase = new EditarConteudoUseCase(repository)
 const excluirUseCase = new ExcluirConteudoUseCase(repository)
@@ -40,7 +40,6 @@ const obterUseCase = new ObterConteudoUseCase(repository)
  * 🔹 2. Cria os services
  * (alto nível, dependem apenas de interfaces)
  */
-const iaClient = new IAClientService();
 const assuntoService = new AssuntoService(repository);
 const disciplinaService = new DisciplinaService(repository);
 const conteudoService = new ConteudoService(criarUseCase, obterUseCase, verificarUseCase, editarUseCase, excluirUseCase);
@@ -61,7 +60,9 @@ app.use("/conteudos", conteudoRoutes(conteudoService));
 /**
  * 🔹 5. Sobe o servidor
  */
-const port = Number(process.env.PORT ?? 3000);
-app.listen(port, () => {
-  console.log(`Server running on http://localhost:${port}`);
+// Pega a porta do Railway OU usa 3000 se estiver local
+const PORT = process.env.PORT ? Number(process.env.PORT) : 3000;
+
+app.listen(PORT, '0.0.0.0', () => {
+  console.log(`🚀 Server running on port ${PORT} (Environment: ${process.env.NODE_ENV})`);
 });

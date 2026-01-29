@@ -6,7 +6,7 @@ import { Assunto } from "../models/ConfiguracaoConteudo";
 
 export class AssuntoService implements IAssuntoService {
 
-  constructor(private repository: IRepository) {}
+  constructor(private repository: IRepository) { }
 
   async list(): Promise<Assunto[]> {
     return this.repository.getAllAssuntos();
@@ -23,14 +23,14 @@ export class AssuntoService implements IAssuntoService {
     const all = await this.repository.getAllAssuntos();
     return all.find(a => a.nome.toLowerCase() === name.toLowerCase());
   }
-  
-   /**
-   * findAssuntoByDisciplina
-   * Busca todos os assuntos associados a uma disciplina específica.
-   * 
-   * @param disciplinaId - O ID da disciplina cujos assuntos serão buscados.
-   * @returns Uma Promise que resolve para um array de objetos Assunto.
-   */
+
+  /**
+  * findAssuntoByDisciplina
+  * Busca todos os assuntos associados a uma disciplina específica.
+  * 
+  * @param disciplinaId - O ID da disciplina cujos assuntos serão buscados.
+  * @returns Uma Promise que resolve para um array de objetos Assunto.
+  */
   async findAssuntoByDisciplina(disciplinaId: string): Promise<Assunto[]> {
     return this.repository.getAssuntosByDisciplina(disciplinaId);
   }
@@ -43,7 +43,7 @@ export class AssuntoService implements IAssuntoService {
     }
 
     // 2. Valida duplicidade de nome
-    const duplicado = await this.findByName(data.nome);
+    const duplicado = await this.existeDuplicado(data.nome, data.disciplinaID);
     if (duplicado) {
       throw new Error("Já existe um assunto com este nome.");
     }
@@ -60,14 +60,24 @@ export class AssuntoService implements IAssuntoService {
 
   async update(id: string, data: Partial<Omit<Assunto, 'id'>>): Promise<void> {
     const atual = await this.get(id); // Garante que existe
-    
+
     const atualizado = {
-        ...atual,
-        ...data
+      ...atual,
+      ...data
     };
 
     await this.repository.updateAssunto(atualizado);
   }
+
+  private async existeDuplicado(nome: string, disciplinaID: string): Promise<boolean> {
+    const all = await this.repository.getAllAssuntos();
+
+    return all.some(a =>
+      a.nome.toLowerCase() === nome.toLowerCase() &&
+      a.disciplinaID === disciplinaID
+    );
+  }
+
 
   async delete(id: string): Promise<void> {
     const deletado = await this.get(id); // Garante que existe antes de tentar deletar
