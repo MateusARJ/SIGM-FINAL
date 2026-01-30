@@ -1,0 +1,35 @@
+services:
+  # 1. API (O Backend) - ESTAVA FALTANDO ISSO
+  api:
+    build: .
+    container_name: sigm_backend
+    ports:
+      - "3000:3000"
+    environment:
+      - SGI_GEMINI_API_KEY=${SGI_GEMINI_API_KEY}
+      - CHROMA_URL=http://vectordb:8000
+      - DATABASE_URL=file:./dev.db
+    depends_on:
+      - vectordb
+    volumes:
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
+    networks:
+      - hackathon-net
+
+  # 2. Banco de Dados (ChromaDB)
+  vectordb:
+    image: chromadb/chroma:latest
+    container_name: bncc_vectordb
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./chroma_data:/chroma/.chroma/index
+    environment:
+      - IS_PERSISTENT=TRUE
+    networks:
+      - hackathon-net
+
+networks:
+  hackathon-net:
+    driver: bridge

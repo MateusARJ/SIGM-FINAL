@@ -1,0 +1,67 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// === SEUS MODELOS ===
+
+model AnoLetivo {
+  id          String       @id @default(uuid()) // Gera ID único automático
+  nome        String
+  
+  // Relação: O prisma entende que Disciplina aponta pra cá
+  disciplinas Disciplina[]
+
+  // Relação inversa para os registros
+  registros   RegistroConteudo[]
+}
+
+model Disciplina {
+  id          String    @id @default(uuid())
+  nome        String
+  
+  // Cria a coluna anoLetivoId no banco e faz o link (Foreign Key)
+  anoLetivoId String
+  anoLetivo   AnoLetivo @relation(fields: [anoLetivoId], references: [id])
+
+  assuntos    Assunto[]
+  
+  // Relação inversa para os registros
+  registros   RegistroConteudo[]
+}
+
+model Assunto {
+  id           String     @id @default(uuid())
+  nome         String
+  
+  disciplinaId String
+  disciplina   Disciplina @relation(fields: [disciplinaId], references: [id])
+  
+  // Relação inversa para os registros
+  registros    RegistroConteudo[]
+}
+
+model RegistroConteudo {
+  requestId    String   @id @default(uuid())
+  
+  // Relações com as outras tabelas
+  anoLetivoId  String
+  disciplinaId String
+  assuntoId    String
+
+  // Só precisamos definir a relação aqui no schema, o Prisma resolve o resto
+  anoLetivo  AnoLetivo  @relation(fields: [anoLetivoId], references: [id])
+  disciplina Disciplina @relation(fields: [disciplinaId], references: [id])
+  assunto    Assunto    @relation(fields: [assuntoId], references: [id])
+
+  status       String   @default("pendente")
+  solicitacao  Json     // Onde guardamos a ConfiguraçãoAula/Prova/Tarefa
+  resultado    Json?    // Onde guardamos o retorno da IA (pode ser nulo '?')
+  
+  criadoEm     DateTime @default(now())
+  atualizadoEm DateTime @updatedAt
+}

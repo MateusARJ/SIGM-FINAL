@@ -1,0 +1,52 @@
+# ===============================
+# Node.js
+# ===============================
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# ===============================
+# Environment variables
+# ===============================
+.env
+.env.local
+.env.*.local
+
+# ===============================
+# TypeScript
+# ===============================
+dist/
+build/
+*.tsbuildinfo
+
+# ===============================
+# Logs
+# ===============================
+logs/
+*.log
+
+# ===============================
+# VS Code
+# ===============================
+.vscode/
+!.vscode/extensions.json
+
+# ===============================
+# OS
+# ===============================
+.DS_Store
+Thumbs.db
+
+# ===============================
+# EXPLICAÇÕES
+# ===============================
+.ARQUITETURA_CONEXAO_IA.md
+.EXPLICACAO_SERVICES_E_FLUXO.md
+/src/generated/prisma
+
+## .Banco de dados
+*.db
+*.db-journal
+/prisma/dev.db
+dev.db
